@@ -1,5 +1,6 @@
 package it.unisalento.drinkssnacks.activity;
 
+import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -10,6 +11,10 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -33,11 +38,14 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import it.unisalento.drinkssnacks.R;
 import it.unisalento.drinkssnacks.model.CategorieForniteModel;
@@ -46,6 +54,7 @@ import it.unisalento.drinkssnacks.singleton.AppSingleton;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
+    public static final String EXTRA_MESSAGE = MapsActivity.class.getCanonicalName();
     private static final String TAG = MapsActivity.class.getSimpleName();
     // zoom of camera on the world view
     private static final int DEFAULT_ZOOM = 15;
@@ -67,6 +76,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // The geographical location where the device is currently located. That is, the last-known
     // location retrieved by the Fused Location Provider.
     private Location mLastKnownLocation;
+
     // test url  windows pc
     //private final String mUrl = "http://192.168.1.105:8080/distributori-rest/distributori.json";
 
@@ -295,7 +305,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     String label = distributore.getIndirizzo();
                                     markerOptions.title(label);
 
-                                    mMap.addMarker(markerOptions);
+                                    mMap.addMarker(markerOptions).setTag(distributore);
+                                    Log.i(TAG, "distirbutore indirizzo = " + distributore.getIndirizzo());
+                                    DistributoriCustomInfoWindowAdapter distributoriCustomInfoWindowAdapter = new DistributoriCustomInfoWindowAdapter();
+
+                                    mMap.setInfoWindowAdapter(distributoriCustomInfoWindowAdapter);
+                                    mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                                        @Override
+                                        public void onInfoWindowClick(Marker marker) {
+                                            DistributoreModel distributoreModel = ((DistributoreModel) marker.getTag());
+                                            Intent intent = new Intent(MapsActivity.this, ProdottiDistributoreListActivity.class);
+                                            intent.putExtra(EXTRA_MESSAGE, distributoreModel.getIdDistributore());
+                                            Log.i(TAG, "Cliccato su marker con distributore id = " + distributoreModel.getIdDistributore());
+                                            Toast toast = Toast.makeText(getApplicationContext(), "Cliccato su marker con distributore id = " + ((DistributoreModel) marker.getTag()).getIdDistributore(), duration);
+                                            toast.show();
+                                            startActivity(intent);
+                                        }
+                                    });
+
                                     Log.i(TAG, distributore.getPosizioneEdificio());
                                     for (CategorieForniteModel categorieForniteModel : distributore.getListCategorieFornite()) {
                                         Log.i(TAG, categorieForniteModel.getNome());
@@ -306,7 +333,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         }
 
 
-                        Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+                        Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
                         toast.show();
 
                     }
@@ -337,6 +364,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
         }
 
+    }
+
+
+    public class DistributoriCustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
+
+        @Override
+        public View getInfoWindow(Marker marker) {
+            return null;
+        }
+
+        @Override
+        public View getInfoContents(Marker marker) {
+            DistributoreModel distributoreModel = (DistributoreModel) marker.getTag();
+            View view = getLayoutInflater().inflate(R.layout.marker_info_window, null);
+            ListView listView = (ListView) view.findViewById(R.id.info_window_list_view);
+            ArrayList<String> categorieForniteNames = new ArrayList<>(distributoreModel.getListCategorieFornite().size());
+            for (CategorieForniteModel categorieForniteModel : distributoreModel.getListCategorieFornite()) {
+                categorieForniteNames.add(categorieForniteModel.getNome());
+            }
+            ArrayAdapter<String> mCategoriesMarkerAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.text_view_only, categorieForniteNames);
+            listView.setAdapter(mCategoriesMarkerAdapter);
+            Log.d(TAG, "indirizzi: + " + distributoreModel.getIndirizzo());
+            Log.d(TAG, "num cunt adapter items: + " + mCategoriesMarkerAdapter.getCount());
+            TextView textViewAddress = (TextView) view.findViewById(R.id.info_window_address);
+            TextView textViewPosizione = (TextView) view.findViewById(R.id.info_window_posizione);
+            textViewAddress.setText(distributoreModel.getIndirizzo());
+            textViewPosizione.setText(distributoreModel.getPosizioneEdificio());
+
+            return view;
+            // return null;
+        }
     }
 
 
