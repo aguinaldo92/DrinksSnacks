@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "671891497281",
+    "firebase_url": "https://drinkssnacks-11c1a.firebaseio.com",
+    "project_id": "drinkssnacks-11c1a",
+    "storage_bucket": "drinkssnacks-11c1a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:671891497281:android:5f5351edee173853",
+        "android_client_info": {
+          "package_name": "it.unisalento.drinkssnacks"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "671891497281-l8qf4vnpagdu03fue2rgf4a02a36vgpt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.unisalento.drinkssnacks",
+            "certificate_hash": "080ddd40620661d57a8f1e8e82c613e8881000d6"
+          }
+        },
+        {
+          "client_id": "671891497281-li2go2ol2mq0es73rdduj8fh8v5tf5au.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqzosbrB9vp4NoJ0xvGISkirxIVTT0pw4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "671891497281-li2go2ol2mq0es73rdduj8fh8v5tf5au.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

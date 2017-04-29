@@ -178,7 +178,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         getDistributoriLocations(mLastKnownLocation);
 
 
-        //iscrizione a un topic di testing delle notifiche Firebase
+        //iscrizione a un topic generico del sistema
         FirebaseMessaging.getInstance().subscribeToTopic("DrinksSnacks");
     }
 
