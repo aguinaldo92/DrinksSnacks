@@ -26,17 +26,20 @@ import it.unisalento.drinkssnacks.singleton.AppSingleton;
  */
 
 public class RowProdottiDistributoreAdapter extends ArrayAdapter {
-    public static final String EXTRA_MESSAGE = RowProdottiDistributoreAdapter.class.getCanonicalName();
+    public static final String EXTRA_PRODOTTODISTRIBUTOREMODELS = RowProdottiDistributoreAdapter.class.getCanonicalName() + "_prodottoDistributoreModels";
+    public static final String EXTRA_IDDISTRIBUTORE = RowProdottiDistributoreAdapter.class.getCanonicalName() + "_idDistributore";
     private static final String TAG = RowProdottiDistributoreAdapter.class.getSimpleName();
     private final Context context;
     private final String baseUrlImage = "http://distributori.ddns.net:8080/distributori/";
     private List<ProdottoDistributoreModel> prodottoDistributoreModels;
     private ImageLoader imageLoader;
+    private int idDistributore;
 
-    public RowProdottiDistributoreAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<ProdottoDistributoreModel> prodottoDistributoreModels) {
+    public RowProdottiDistributoreAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<ProdottoDistributoreModel> prodottoDistributoreModels, @NonNull int idDistributore) {
         super(context, resource, prodottoDistributoreModels);
         this.context = context;
         this.prodottoDistributoreModels = prodottoDistributoreModels;
+        this.idDistributore = idDistributore;
     }
 
     @Override
@@ -72,7 +75,8 @@ public class RowProdottiDistributoreAdapter extends ArrayAdapter {
             public void onClick(View v) {
 
                 Intent intent = new Intent(context, AcquistaActivity.class);
-                intent.putExtra(EXTRA_MESSAGE, prodottoDistributoreModels.get(Integer.parseInt(v.getTag().toString())));
+                intent.putExtra(EXTRA_PRODOTTODISTRIBUTOREMODELS, prodottoDistributoreModels.get(Integer.parseInt(v.getTag().toString())));
+                intent.putExtra(EXTRA_IDDISTRIBUTORE, idDistributore);
                 context.startActivity(intent);
             }
         });

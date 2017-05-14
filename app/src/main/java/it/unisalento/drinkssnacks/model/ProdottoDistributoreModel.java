@@ -27,8 +27,8 @@ public class ProdottoDistributoreModel implements Parcelable {
     private String produttore;
     private String foto64;
     private String foto256;
-    private double prezzo;
-    private double sconto;
+    private String prezzo;
+    private String sconto;
 
     protected ProdottoDistributoreModel(Parcel in) {
         idProdottoErogato = in.readInt();
@@ -40,8 +40,8 @@ public class ProdottoDistributoreModel implements Parcelable {
         produttore = in.readString();
         foto64 = in.readString();
         foto256 = in.readString();
-        prezzo = in.readDouble();
-        sconto = in.readDouble();
+        prezzo = in.readString();
+        sconto = in.readString();
     }
 
     public int getIdProdottoErogato() {
@@ -116,19 +116,19 @@ public class ProdottoDistributoreModel implements Parcelable {
         this.foto256 = foto256;
     }
 
-    public double getPrezzo() {
+    public String getPrezzo() {
         return prezzo;
     }
 
-    public void setPrezzo(double prezzo) {
+    public void setPrezzo(String prezzo) {
         this.prezzo = prezzo;
     }
 
-    public double getSconto() {
+    public String getSconto() {
         return sconto;
     }
 
-    public void setSconto(double sconto) {
+    public void setSconto(String sconto) {
         this.sconto = sconto;
     }
 
@@ -148,7 +148,7 @@ public class ProdottoDistributoreModel implements Parcelable {
         dest.writeString(produttore);
         dest.writeString(foto64);
         dest.writeString(foto256);
-        dest.writeDouble(prezzo);
-        dest.writeDouble(sconto);
+        dest.writeString(prezzo);
+        dest.writeString(sconto);
     }
 }
