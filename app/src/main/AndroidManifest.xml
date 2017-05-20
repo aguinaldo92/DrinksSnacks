@@ -55,15 +55,30 @@
 
         <activity
             android:name=".activity.MapsActivity"
-            android:label="@string/title_activity_maps">
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.ProdottiDistributoreListActivity" />
-        <activity android:name=".activity.AcquistaActivity" />
+        <activity
+            android:name=".activity.ProdottiDistributoreListActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".activity.MapsActivity" />
+        <activity
+            android:name=".activity.AcquistaActivity"
+            android:label="@string/title_activity_acquista"
+            android:parentActivityName=".activity.ProdottiDistributoreListActivity" />
+        <activity
+            android:name=".activity.LoginActivity"
+            android:label="@string/title_activity_login"
+            android:parentActivityName=".activity.MapsActivity" />
+        <activity
+            android:name=".activity.DettagliProdottoActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".activity.ProdottiDistributoreListActivity" />
+
 
         <!-- [START firebase_service] -->
         <service android:name=".util.FCMMessagingService">
@@ -87,10 +102,7 @@
             </intent-filter>
         </service>
 
-        <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login" />
-        <activity android:name=".activity.RegistrationActivity"></activity>
+
     </application>
 
 </manifest>

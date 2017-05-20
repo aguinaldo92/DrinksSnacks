@@ -25,8 +25,6 @@
         android:layout_gravity="end"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:ellipsize="middle"
-        android:gravity="end"
         app:layout_constraintBaseline_toBaselineOf="@+id/row_activity_btn_acquista"
         app:layout_constraintRight_toLeftOf="@+id/row_activity_btn_acquista" />
 

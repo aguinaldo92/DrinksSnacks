@@ -1,6 +1,7 @@
 package it.unisalento.drinkssnacks.singleton;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
 
@@ -8,12 +9,16 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.auth0.android.jwt.JWT;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by aguinaldo on 18/04/2017.
  */
 
 public class AppSingleton {
+    private final static String SHARED_PREFERENCES_DISTRIBUTORI = "SharedPreferencesDistributori";
     private static AppSingleton mInstance;
     private static Context mCtx;
     private RequestQueue mRequestQueue;
@@ -27,7 +32,7 @@ public class AppSingleton {
         mImageLoader = new ImageLoader(mRequestQueue,
                 new ImageLoader.ImageCache() {
                     private final LruCache<String, Bitmap>
-                            cache = new LruCache<String, Bitmap>(20);
+                            cache = new LruCache<>(20);
 
                     @Override
                     public Bitmap getBitmap(String url) {
@@ -48,6 +53,10 @@ public class AppSingleton {
         return mInstance;
     }
 
+    public static String getSharedPreferencesDistributori() {
+        return SHARED_PREFERENCES_DISTRIBUTORI;
+    }
+
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
@@ -65,4 +74,22 @@ public class AppSingleton {
         return mImageLoader;
     }
 
+    public Boolean isTokenValid() {
+        SharedPreferences prefs = null;
+        String token;
+
+        prefs = mCtx.getSharedPreferences(SHARED_PREFERENCES_DISTRIBUTORI, MODE_PRIVATE);
+        if (prefs != null) {
+            token = prefs.getString("token", null);
+            if (token != null) {
+                JWT jwt = new JWT(token);
+                if (!jwt.isExpired(20))
+                    return true;
+            }
+            prefs.edit().putString("token", null);
+            prefs.edit().commit();
+
+        }
+        return false;
+    }
 }

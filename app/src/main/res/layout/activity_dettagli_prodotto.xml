@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    tools:context="it.unisalento.drinkssnacks.activity.DettagliProdottoActivity">
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/dettagli_activity_nomeProdotto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textStyle="bold"
+                tools:layout_editor_absoluteX="162dp"
+                tools:layout_editor_absoluteY="91dp" />
+
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/dettagli_activity_img_prodotto"
+                android:layout_width="256dp"
+                android:layout_height="256dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:adjustViewBounds="false" />
+
+            <TextView
+                android:id="@+id/dettagli_activity_descrizioneProdotto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/dettagli_activity_text_produttore"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/produttore"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/dettagli_activity_nomeProduttore"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/dettagli_activity_text_stabilimento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stabilimentoModel"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/dettagli_activity_stabilimento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/dettagli_activity_text_prezzoUnitario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/prezzoUnitario"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/dettagli_activity_prezzoUnitario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/dettagli_activity_text_quantitaDisponibile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/quantitaDisponibile"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/dettagli_activity_quantitaDisponibile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/dettagli_activity_text_sconto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sconto"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/dettagli_activity_sconto"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                >
+
+                <TextView
+                    android:id="@+id/dettagli_activity_text_quantitaScelta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/quantita_scelta"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Button
+                    android:id="@+id/dettagli_activity_btn_acquista"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/acquista_activity_btn_acquista"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/dettagli_activity_quantitaScelta" />
+
+                <SeekBar
+                    android:id="@+id/dettagli_activity_seekBar_quantita"
+                    android:layout_width="0dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintLeft_toRightOf="@+id/dettagli_activity_quantitaScelta"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/dettagli_activity_quantitaScelta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:text="0"
+                    app:layout_constraintLeft_toRightOf="@+id/dettagli_activity_text_quantitaScelta"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/dettagli_activity_text_ingredienti"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ingredienti"
+                    android:textStyle="bold"
+                    tools:layout_editor_absoluteX="16dp"
+                    tools:layout_editor_absoluteY="89dp" />
+
+                <TextView
+                    android:id="@+id/dettagli_activity_ingredienti"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/dettagli_activity_text_preparazione"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/preparazione"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/dettagli_activity_preparazione"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</android.support.constraint.ConstraintLayout>

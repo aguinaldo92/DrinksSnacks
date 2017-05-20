@@ -8,7 +8,7 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in">Sign in</string>
     <string name="action_sign_up">Register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_sign_up_short">Sign up</string>
@@ -19,7 +19,18 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."
     </string>
     <string name="window_list_title">Prodotti erogati dal distributore</string>
-    <string name="acquista_activity_quantita">Quantità</string>
+    <string name="quantita_scelta">Quantità:</string>
     <string name="acquista_activity_btn_acquista">Acquista</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="error_generic">Something goes wrong</string>
+    <string name="error_login_needed_detailed_info_products">You need to login to see the datailed informations of the products</string>
+    <string name="stabilimentoModel">Stabilimento:</string>
+    <string name="produttore">Produttore:</string>
+    <string name="prezzoUnitario">Prezzo Unitario:</string>
+    <string name="quantitaDisponibile">Quantità disponibile:</string>
+    <string name="sconto">Sconto:</string>
+    <string name="ingredienti">Ingredienti:</string>
+    <string name="preparazione">Preparazione:</string>
+    <string name="title_activity_acquista">Acquista</string>
+    <string name="title_activity_dettagli">Prodotto</string>
 </resources>

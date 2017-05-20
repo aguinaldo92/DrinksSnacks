@@ -301,7 +301,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Gson gson = new Gson();
 
                         JSONArray jsonArray = response.optJSONArray(distributoriArray);
-                        CharSequence text = "Response: " + response.toString();
+                        CharSequence text = "Response: " ;
                         if (jsonArray != null) {
                             DistributoreModel[] distributori = gson.fromJson(jsonArray.toString(), DistributoreModel[].class);
                             if (distributori != null && distributori.length > 0) {
@@ -385,7 +385,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             DistributoreModel distributoreModel = (DistributoreModel) marker.getTag();
             View view = getLayoutInflater().inflate(R.layout.marker_info_window, null);
             ListView listView = (ListView) view.findViewById(R.id.info_window_list_view);
-            ArrayList<String> categorieForniteNames = new ArrayList<>(distributoreModel.getListCategorieFornite().size());
+            ArrayList<String> categorieForniteNames = new ArrayList<>();
             for (CategorieForniteModel categorieForniteModel : distributoreModel.getListCategorieFornite()) {
                 categorieForniteNames.add(categorieForniteModel.getNome());
             }

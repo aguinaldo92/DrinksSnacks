@@ -24,8 +24,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toLeftOf="@+id/acquista_activity_text_produttore"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/acquista_activity_text_nome_prodotto" />
 
@@ -44,19 +43,16 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/acquista_activity_quantita"
+        android:text="@string/quantita_scelta"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/acquista_activity_img_prodotto" />
 
     <SeekBar
         android:id="@+id/acquista_activity_seekbar_quantita"
-        style="@android:style/Widget.Material.SeekBar.Discrete"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
+        android:layout_width="225dp"
+        android:layout_height="18dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/acquista_activity_text_quantita"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/acquista_activity_img_prodotto" />
 
@@ -66,10 +62,37 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="@string/acquista_activity_btn_acquista"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/acquista_activity_seekbar_quantita" />
+
+    <TextView
+        android:id="@+id/acquista_activity_text_quantita_acquistata"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:text="0"
+        app:layout_constraintHorizontal_bias="0.1"
+        app:layout_constraintLeft_toRightOf="@+id/acquista_activity_text_quantita"
+        app:layout_constraintRight_toLeftOf="@+id/acquista_activity_seekbar_quantita"
+        app:layout_constraintTop_toBottomOf="@+id/acquista_activity_img_prodotto" />
+
+    <TextView
+        android:id="@+id/acquista_activity_text_produttore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Produttore:"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@+id/acquista_activity_text_nome_produttore"
+        app:layout_constraintTop_toBottomOf="@+id/acquista_activity_text_nome_prodotto" />
 
 </android.support.constraint.ConstraintLayout>

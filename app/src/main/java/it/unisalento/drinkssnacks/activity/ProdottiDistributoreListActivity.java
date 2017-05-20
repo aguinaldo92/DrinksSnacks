@@ -46,7 +46,7 @@ public class ProdottiDistributoreListActivity extends ListActivity {
         Toast toast = Toast.makeText(getApplicationContext(), "visualizzo distributore con id = " + idDistributore, Toast.LENGTH_SHORT);
         toast.show();
 
-        final String getUrl = mUrl + "?" + "idDistributore=" + idDistributore;
+        String getUrl = mUrl + "?" + "idDistributore=" + idDistributore;
         final String prodottiDistributoreArray = "prodottiErogati";
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, getUrl, null, new Response.Listener<JSONObject>() {
@@ -66,8 +66,8 @@ public class ProdottiDistributoreListActivity extends ListActivity {
                                 adapter.addAll(prodottoDistributoreModels);
                                 adapter.notifyDataSetChanged();
                             }
-                            Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
-                            toast.show();
+                            //Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
+                            //toast.show();
                         }
 
                     }

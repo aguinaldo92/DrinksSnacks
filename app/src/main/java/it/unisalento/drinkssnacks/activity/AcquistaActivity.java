@@ -36,9 +36,11 @@ public class AcquistaActivity extends AppCompatActivity {
     private final String baseUrlImage = "http://distributori.ddns.net:8080/distributori/";
     private final String mUrl = "http://distributori.ddns.net:8080/distributori-rest/acquista.json";
     private int quantitaDaAcquistare = 0;
+    private int maxQuantitaAcquistabile = 5;
     private ProdottoDistributoreModel prodottoDistributoreModel;
     private int idDistributore = -1;
     private Button btnAcquista;
+    private TextView textViewQuantitaAcquistata;
     private ImageLoader imageLoader;
     private Intent intent = new Intent();
 
@@ -50,6 +52,9 @@ public class AcquistaActivity extends AppCompatActivity {
         Intent intentReceived = getIntent();
         prodottoDistributoreModel = intentReceived.getParcelableExtra(RowProdottiDistributoreAdapter.EXTRA_PRODOTTODISTRIBUTOREMODELS);
         idDistributore = intentReceived.getIntExtra(RowProdottiDistributoreAdapter.EXTRA_IDDISTRIBUTORE, idDistributore);
+        if(prodottoDistributoreModel.getQuantita() < 5) {
+            maxQuantitaAcquistabile = prodottoDistributoreModel.getQuantita();
+        }
         TextView textViewNomeProdotto = (TextView) findViewById(R.id.acquista_activity_text_nome_prodotto);
         TextView textViewNomeProduttore = (TextView) findViewById(R.id.acquista_activity_text_nome_produttore);
         NetworkImageView imageProdottoView = (NetworkImageView) findViewById(R.id.acquista_activity_img_prodotto);
@@ -58,13 +63,14 @@ public class AcquistaActivity extends AppCompatActivity {
         SeekBar seekBarQuantita = (SeekBar) findViewById(R.id.acquista_activity_seekbar_quantita);
         textViewNomeProdotto.setText(prodottoDistributoreModel.getNome());
         textViewNomeProduttore.setText(prodottoDistributoreModel.getProduttore());
-        seekBarQuantita.setMax(prodottoDistributoreModel.getQuantita());
+        textViewQuantitaAcquistata = (TextView) findViewById(R.id.acquista_activity_text_quantita_acquistata);
+        seekBarQuantita.setMax(maxQuantitaAcquistabile);
         seekBarQuantita.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 quantitaDaAcquistare = progress;
-
-                btnAcquista.setText(getString(R.string.acquista_activity_btn_acquista) + "€" + getPrice(quantitaDaAcquistare, prodottoDistributoreModel.getPrezzo()));
+                textViewQuantitaAcquistata.setText(String.valueOf(quantitaDaAcquistare));
+                btnAcquista.setText(getString(R.string.acquista_activity_btn_acquista) + ":  €" + getPrice(quantitaDaAcquistare, prodottoDistributoreModel.getPrezzo()));
             }
 
             @Override
@@ -138,7 +144,6 @@ public class AcquistaActivity extends AppCompatActivity {
     }
 
     private BigDecimal getPrice(int quantita, String prezzo) {
-        BigDecimal price = new BigDecimal(prezzo).multiply(new BigDecimal(quantita));
-        return price;
+        return new BigDecimal(prezzo).multiply(new BigDecimal(quantita));
     }
 }
