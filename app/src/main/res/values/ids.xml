@@ -2,4 +2,6 @@
 <resources>
     <item name="visible" type="id" />
     <item name="masked" type="id" />
+    <item name="holderTag" type="id" >0</item>
+    <item name="positionTag" type="id">1</item>
 </resources>

@@ -13,8 +13,7 @@ public class ProdottoDetailModel {
     private String sconto;
     private String ingredienti;
     private String preparazione;
-    private ProduttoreModel produttoreModel;
-    private StabilimentoModel stabilimentoModel;
+    private ProduttoreModel produttore;
 
     public int getIdProdotto() {
         return idProdotto;
@@ -80,19 +79,12 @@ public class ProdottoDetailModel {
         this.preparazione = preparazione;
     }
 
-    public ProduttoreModel getProduttoreModel() {
-        return produttoreModel;
+    public ProduttoreModel getProduttore() {
+        return produttore;
     }
 
-    public void setProduttoreModel(ProduttoreModel produttoreModel) {
-        this.produttoreModel = produttoreModel;
+    public void setProduttore(ProduttoreModel produttore) {
+        this.produttore = produttore;
     }
 
-    public StabilimentoModel getStabilimentoModel() {
-        return stabilimentoModel;
-    }
-
-    public void setStabilimentoModel(StabilimentoModel stabilimentoModel) {
-        this.stabilimentoModel = stabilimentoModel;
-    }
 }

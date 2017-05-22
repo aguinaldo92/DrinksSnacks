@@ -36,12 +36,23 @@ public class RowProdottiDistributoreAdapter extends ArrayAdapter {
     private ImageLoader imageLoader;
     private int idDistributore;
 
+
+    static class ViewHolder {
+        public TextView textViewNomeProdotto;
+        TextView textViewNomeProduttore;
+        public TextView textViewScaffale;
+        public TextView textViewQuantita;
+        public Button btnAcquista;
+        public NetworkImageView imageProdottoView;
+    }
+
     public RowProdottiDistributoreAdapter( Context context, @LayoutRes int resource, List<ProdottoDistributoreModel> prodottoDistributoreModels, int idDistributore) {
         super(context, resource, prodottoDistributoreModels);
         this.context = context;
         this.prodottoDistributoreModels = prodottoDistributoreModels;
         this.idDistributore = idDistributore;
     }
+
 
     @Override
     public int getCount() {
@@ -50,35 +61,40 @@ public class RowProdottiDistributoreAdapter extends ArrayAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) context
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        imageLoader = AppSingleton.getInstance(context).getImageLoader();
-        View rowView = inflater.inflate(R.layout.row_activity_list_prodotti_distributore, parent, false);
-        TextView textViewNomeProdotto = (TextView) rowView.findViewById(R.id.row_activity_text_nome_prodotto);
-        TextView textViewNomeProduttore = (TextView) rowView.findViewById(R.id.row_activity_text_nome_produttore);
-        // TextView textViewPrezzo = (TextView) rowView.findViewById(R.id.row_activity_text_prezzo);
-        TextView textViewScaffale = (TextView) rowView.findViewById(R.id.row_activity_text_scaffale);
-        //TextView textViewPosto = (TextView) rowView.findViewById(R.id.row_activity_text_posto);
-        TextView textViewQuantita = (TextView) rowView.findViewById(R.id.row_activity_text_quantita);
-        Button btnAcquista = (Button) rowView.findViewById(R.id.row_activity_btn_acquista);
-        NetworkImageView imageProdottoView = (NetworkImageView) rowView.findViewById(R.id.row_activity_img_prodotto);
-
-        imageProdottoView.setImageUrl(baseUrlImage + prodottoDistributoreModels.get(position).getFoto64(), imageLoader);
-        textViewNomeProdotto.setText(prodottoDistributoreModels.get(position).getNome());
-        textViewNomeProduttore.setText(prodottoDistributoreModels.get(position).getProduttore());
-        btnAcquista.setText(String.valueOf(prodottoDistributoreModels.get(position).getPrezzo()));
-        textViewScaffale.setText("Scaf:" + prodottoDistributoreModels.get(position).getScaffale() + " Posto:" + prodottoDistributoreModels.get(position).getPosto());
-        textViewQuantita.setText("Q.tà: " + prodottoDistributoreModels.get(position).getQuantita());
+        View rowView = convertView;
+        if (rowView == null) {
+            LayoutInflater inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            imageLoader = AppSingleton.getInstance(context).getImageLoader();
+            rowView = inflater.inflate(R.layout.row_activity_list_prodotti_distributore, parent, false);
+            ViewHolder viewHolder = new ViewHolder();
+            viewHolder.textViewNomeProdotto = (TextView) rowView.findViewById(R.id.row_activity_text_nome_prodotto);
+            viewHolder.textViewNomeProduttore = (TextView) rowView.findViewById(R.id.row_activity_text_nome_produttore);
+            // TextView textViewPrezzo = (TextView) rowView.findViewById(R.id.row_activity_text_prezzo);
+            viewHolder.textViewScaffale = (TextView) rowView.findViewById(R.id.row_activity_text_scaffale);
+            //TextView textViewPosto = (TextView) rowView.findViewById(R.id.row_activity_text_posto);
+            viewHolder.textViewQuantita = (TextView) rowView.findViewById(R.id.row_activity_text_quantita);
+            viewHolder.btnAcquista = (Button) rowView.findViewById(R.id.row_activity_btn_acquista);
+            viewHolder.imageProdottoView = (NetworkImageView) rowView.findViewById(R.id.row_activity_img_prodotto);
+            rowView.setTag(R.id.holderTag,viewHolder);
+        }
+        ViewHolder holder = (ViewHolder) rowView.getTag(R.id.holderTag);
+        holder.imageProdottoView.setImageUrl(baseUrlImage + prodottoDistributoreModels.get(position).getFoto64(), imageLoader);
+        holder.textViewNomeProdotto.setText(prodottoDistributoreModels.get(position).getNome());
+        holder.textViewNomeProduttore.setText(prodottoDistributoreModels.get(position).getProduttore());
+        holder.btnAcquista.setText(String.valueOf(prodottoDistributoreModels.get(position).getPrezzo()));
+        holder.textViewScaffale.setText("Scaf:" + prodottoDistributoreModels.get(position).getScaffale() + " Posto:" + prodottoDistributoreModels.get(position).getPosto());
+        holder.textViewQuantita.setText("Q.tà: " + prodottoDistributoreModels.get(position).getQuantita());
         //textViewPosto.setText("Posto:"+prodottoDistributoreModels.get(position).getPosto());
 
-        btnAcquista.setTag(String.valueOf(position));
-        rowView.setTag(String.valueOf(position));
+        holder.btnAcquista.setTag(R.id.positionTag,String.valueOf(position));
+        rowView.setTag(R.id.positionTag,String.valueOf(position));
 
-        btnAcquista.setOnClickListener(new View.OnClickListener() {
+        holder.btnAcquista.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    Integer position = Integer.parseInt(v.getTag().toString());
+                    Integer position = Integer.parseInt(v.getTag(R.id.positionTag).toString());
                     Intent intent = new Intent(context, AcquistaActivity.class);
                     intent.putExtra(EXTRA_PRODOTTODISTRIBUTOREMODELS, prodottoDistributoreModels.get(position));
                     intent.putExtra(EXTRA_IDDISTRIBUTORE, idDistributore);
@@ -94,7 +110,7 @@ public class RowProdottiDistributoreAdapter extends ArrayAdapter {
             @Override
             public void onClick(View v) {
                 try {
-                    Integer position = Integer.parseInt(v.getTag().toString());
+                    Integer position = Integer.parseInt(v.getTag(R.id.positionTag).toString());
                     Intent intent = new Intent(context, DettagliProdottoActivity.class);
                     intent.putExtra(EXTRA_PRODOTTODISTRIBUTOREMODELS, prodottoDistributoreModels.get(position));
                     intent.putExtra(EXTRA_IDDISTRIBUTORE, idDistributore);

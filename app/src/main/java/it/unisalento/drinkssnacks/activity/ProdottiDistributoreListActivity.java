@@ -4,6 +4,8 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -26,20 +28,22 @@ import it.unisalento.drinkssnacks.model.ProdottoDistributoreModel;
 import it.unisalento.drinkssnacks.singleton.AppSingleton;
 
 
-public class ProdottiDistributoreListActivity extends ListActivity {
+public class ProdottiDistributoreListActivity extends AppCompatActivity {
 
     private static final String TAG = ProdottiDistributoreListActivity.class.getSimpleName();
     private final String mUrl = "http://distributori.ddns.net:8080/distributori-rest/prodotti_erogati.json";
     private int idDistributore;
     private List<ProdottoDistributoreModel> prodottoDistributoreModels = new ArrayList<>();
     private RowProdottiDistributoreAdapter adapter;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_prodotti_distributore);
         adapter = new RowProdottiDistributoreAdapter(this, R.layout.row_activity_list_prodotti_distributore, prodottoDistributoreModels, idDistributore);
-        setListAdapter(adapter);
+        listView = (ListView) findViewById(R.id.list);
+        listView.setAdapter(adapter);
 
         Intent intent = getIntent();
         this.idDistributore = intent.getIntExtra(MapsActivity.EXTRA_MESSAGE, -1);

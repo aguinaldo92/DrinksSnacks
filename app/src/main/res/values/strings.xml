@@ -24,7 +24,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="error_generic">Something goes wrong</string>
     <string name="error_login_needed_detailed_info_products">You need to login to see the datailed informations of the products</string>
-    <string name="stabilimentoModel">Stabilimento:</string>
+    <string name="stabilimento">Stabilimento:</string>
     <string name="produttore">Produttore:</string>
     <string name="prezzoUnitario">Prezzo Unitario:</string>
     <string name="quantitaDisponibile">Quantità disponibile:</string>

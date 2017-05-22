@@ -27,6 +27,7 @@ import it.unisalento.drinkssnacks.R;
 import it.unisalento.drinkssnacks.adapter.RowProdottiDistributoreAdapter;
 import it.unisalento.drinkssnacks.model.ProdottoDetailModel;
 import it.unisalento.drinkssnacks.model.ProdottoDistributoreModel;
+import it.unisalento.drinkssnacks.model.StabilimentoModel;
 import it.unisalento.drinkssnacks.singleton.AppSingleton;
 
 
@@ -154,20 +155,25 @@ public class DettagliProdottoActivity extends AppCompatActivity {
         textViewNomeProdotto.setText(prodottoDetailModel.getNome());
         imageProdottoView.setImageUrl(baseUrlImage + prodottoDetailModel.getFoto256(), imageLoader);
         textViewDescrizione.setText(prodottoDetailModel.getDescrizione());
-        textViewNomeProduttore.setText(prodottoDetailModel.getProduttoreModel().getNome());
-        textViewStabilimento.setText(prodottoDetailModel.getStabilimentoModel().getCitta() + "(" + prodottoDetailModel.getStabilimentoModel().getProvincia() + ")");
+        textViewNomeProduttore.setText(prodottoDetailModel.getProduttore().getNome());
+        StabilimentoModel stabilimentoModel = prodottoDetailModel.getProduttore().getStabilimento();
+        String stabilimentoText = stabilimentoModel.getCitta() + " " + "(" + stabilimentoModel.getProvincia() + ")";
+        textViewStabilimento.setText(stabilimentoText);
         textViewPrezzoUnitario.setText(prodottoDetailModel.getPrezzo());
-        textViewQuantitaDisponibile.setText(prodottoDistributoreModel.getQuantita());
+        String quantitaDisponibile = String.valueOf(prodottoDistributoreModel.getQuantita());
+        textViewQuantitaDisponibile.setText(quantitaDisponibile);
         textViewSconto.setText(prodottoDistributoreModel.getSconto());
         textViewIngredienti.setText(prodottoDetailModel.getIngredienti());
         textViewPreparazione.setText(prodottoDetailModel.getPreparazione());
-        textViewQuantitaScelta.setText(mQuantitaScelta);
+        textViewQuantitaScelta.setText(String.valueOf(mQuantitaScelta));
+        seekBarQuantita.setMax(maxQuantitaAcquistabile);
         seekBarQuantita.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                setmQuantitaScelta(progress);
-                textViewQuantitaScelta.setText(String.valueOf(progress));
-                btnAcquista.setText(getString(R.string.acquista_activity_btn_acquista) + ":  €" + getPrice(progress, prodottoDistributoreModel.getPrezzo()));
+                int actualProgress = progress + 1;
+                setmQuantitaScelta(actualProgress);
+                textViewQuantitaScelta.setText(String.valueOf(actualProgress));
+                btnAcquista.setText(getString(R.string.acquista_activity_btn_acquista) + ":  €" + getPrice(actualProgress, prodottoDistributoreModel.getPrezzo()));
             }
 
             @Override
@@ -177,6 +183,7 @@ public class DettagliProdottoActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
+                textViewQuantitaScelta.setTypeface(null, Typeface.NORMAL);
 
 
             }

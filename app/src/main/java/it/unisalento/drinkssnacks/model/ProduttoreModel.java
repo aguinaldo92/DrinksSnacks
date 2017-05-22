@@ -7,6 +7,15 @@ package it.unisalento.drinkssnacks.model;
 public class ProduttoreModel {
     private String nome;
     private String sede;
+    private StabilimentoModel stabilimento;
+
+    public StabilimentoModel getStabilimento() {
+        return stabilimento;
+    }
+
+    public void setStabilimento(StabilimentoModel stabilimento) {
+        this.stabilimento = stabilimento;
+    }
 
     public String getNome() {
         return nome;
