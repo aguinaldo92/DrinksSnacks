@@ -229,7 +229,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="6dp"
                     android:layout_marginStart="8dp"
-                    android:text="0"
+                    android:text="1"
                     app:layout_constraintLeft_toRightOf="@+id/dettagli_activity_text_quantitaScelta"
                     app:layout_constraintBaseline_toBaselineOf="@+id/dettagli_activity_text_quantitaScelta" />
 

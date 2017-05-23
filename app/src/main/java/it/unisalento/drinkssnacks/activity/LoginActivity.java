@@ -264,8 +264,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private void attemptRegistration() {
-
-
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -322,16 +320,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     Boolean isLogged = response.optBoolean(result, false);
                     if (isLogged) {
                         String token = response.optString("token", "token non valido");
+                        int idUtente = response.optInt("idUtente",-1);
                         SharedPreferences.Editor editor = getSharedPreferences(AppSingleton.getSharedPreferencesDistributori(), MODE_PRIVATE).edit();
                         editor.putString("token", token);
+                        editor.putInt("idUtente",idUtente);
                         editor.commit();
 
                     }
 
                     Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
                     toast.show();
-
-
                 }
             }, new Response.ErrorListener() {
 
@@ -339,13 +337,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 public void onErrorResponse(VolleyError error) {
                     Toast toast = Toast.makeText(getApplicationContext(), "Errore", Toast.LENGTH_SHORT);
                     toast.show();
-
                 }
             });
 
             // Access the RequestQueue through your singleton class.
             AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(jsObjRequest);
-
         }
     }
 

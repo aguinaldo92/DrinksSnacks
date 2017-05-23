@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package it.unisalento.drinkssnacks.util;
+package it.unisalento.drinkssnacks.service;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;

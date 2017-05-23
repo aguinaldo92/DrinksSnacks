@@ -20,7 +20,7 @@
     </string>
     <string name="window_list_title">Prodotti erogati dal distributore</string>
     <string name="quantita_scelta">Quantità:</string>
-    <string name="acquista_activity_btn_acquista">Acquista</string>
+    <string name="acquista_activity_btn_acquista">Acquista: € %1$s</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="error_generic">Something goes wrong</string>
     <string name="error_login_needed_detailed_info_products">You need to login to see the datailed informations of the products</string>

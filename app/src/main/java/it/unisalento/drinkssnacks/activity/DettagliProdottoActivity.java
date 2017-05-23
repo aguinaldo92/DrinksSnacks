@@ -67,8 +67,6 @@ public class DettagliProdottoActivity extends AppCompatActivity {
         } else {
             raiseError();
         }
-
-
     }
 
 
@@ -173,7 +171,7 @@ public class DettagliProdottoActivity extends AppCompatActivity {
                 int actualProgress = progress + 1;
                 setmQuantitaScelta(actualProgress);
                 textViewQuantitaScelta.setText(String.valueOf(actualProgress));
-                btnAcquista.setText(getString(R.string.acquista_activity_btn_acquista) + ":  €" + getPrice(actualProgress, prodottoDistributoreModel.getPrezzo()));
+                btnAcquista.setText(getString(R.string.acquista_activity_btn_acquista,String.valueOf(getPrice(actualProgress, prodottoDistributoreModel.getPrezzo()))));
             }
 
             @Override
@@ -184,8 +182,6 @@ public class DettagliProdottoActivity extends AppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 textViewQuantitaScelta.setTypeface(null, Typeface.NORMAL);
-
-
             }
         });
 

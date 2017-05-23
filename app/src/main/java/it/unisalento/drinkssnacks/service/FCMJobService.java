@@ -1,4 +1,4 @@
-package it.unisalento.drinkssnacks.util;
+package it.unisalento.drinkssnacks.service;
 
 
 import com.firebase.jobdispatcher.JobParameters;
