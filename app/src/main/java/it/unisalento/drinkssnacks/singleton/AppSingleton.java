@@ -74,13 +74,21 @@ public class AppSingleton {
         return mImageLoader;
     }
 
+    public SharedPreferences distributoriPreferences() {
+        SharedPreferences prefs = null;
+        try {
+            prefs = mCtx.getSharedPreferences(SHARED_PREFERENCES_DISTRIBUTORI, MODE_PRIVATE);
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return prefs;
+    }
 
     public Boolean isTokenValid() {
         SharedPreferences prefs = null;
         String token;
-        try{
-        prefs = mCtx.getSharedPreferences(SHARED_PREFERENCES_DISTRIBUTORI, MODE_PRIVATE);
+        prefs = distributoriPreferences();
         if (prefs != null) {
             token = prefs.getString("token", null);
             if (token != null) {
@@ -91,9 +99,7 @@ public class AppSingleton {
             prefs.edit().putString("token", null);
             prefs.edit().commit();
         }
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+
         return false;
     }
 }

@@ -320,8 +320,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                         @Override
                                         public void onInfoWindowClick(Marker marker) {
                                             DistributoreModel distributoreModel = ((DistributoreModel) marker.getTag());
+                                            //TODO: cambiare a scrolling activity
                                             Intent intent = new Intent(MapsActivity.this, ProdottiDistributoreListActivity.class);
                                             intent.putExtra(EXTRA_MESSAGE, distributoreModel.getIdDistributore());
+                                            /*
+                                            Intent intent = new Intent(MapsActivity.this, ScrollingActivity.class);
+                                            //intent.putExtra(EXTRA_MESSAGE, distributoreModel.getIdDistributore());
+                                            */
                                             Log.i(TAG, "Cliccato su marker con distributore id = " + distributoreModel.getIdDistributore());
                                             Toast toast = Toast.makeText(getApplicationContext(), "Cliccato su marker con distributore id = " + ((DistributoreModel) marker.getTag()).getIdDistributore(), duration);
                                             toast.show();

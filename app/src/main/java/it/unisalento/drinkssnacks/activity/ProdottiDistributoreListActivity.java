@@ -1,7 +1,7 @@
 package it.unisalento.drinkssnacks.activity;
 
-import android.app.ListActivity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -40,13 +40,21 @@ public class ProdottiDistributoreListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_list_prodotti_distributore);
         adapter = new RowProdottiDistributoreAdapter(this, R.layout.row_activity_list_prodotti_distributore, prodottoDistributoreModels, idDistributore);
         listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(adapter);
 
         Intent intent = getIntent();
-        this.idDistributore = intent.getIntExtra(MapsActivity.EXTRA_MESSAGE, -1);
+        int idDistributoreSalvato = -1;
+        if (savedInstanceState != null) {
+            idDistributoreSalvato = savedInstanceState.getInt("idDistributore", -1);
+        }
+        this.idDistributore = intent.getIntExtra(MapsActivity.EXTRA_MESSAGE, idDistributoreSalvato);
+        if(idDistributore == -1) {
+            idDistributore =  restoreIdDistributore();
+        }
         Toast toast = Toast.makeText(getApplicationContext(), "visualizzo distributore con id = " + idDistributore, Toast.LENGTH_SHORT);
         toast.show();
 
@@ -87,6 +95,47 @@ public class ProdottiDistributoreListActivity extends AppCompatActivity {
 
         // Access the RequestQueue through your singleton class.
         AppSingleton.getInstance(this).addToRequestQueue(jsObjRequest);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();  // Always call the superclass method first
+        // Release the Camera because we don't need it when paused
+        // and other activities might need to use it.
+        saveIdDistributore();
+    }
+
+    // solo per i cambiamenti di orientazione;
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        // savedInstanceState.putBoolean("MyBoolean", true);
+        //savedInstanceState.putDouble("myDouble", 1.9);
+        savedInstanceState.putInt("idDistributore", idDistributore);
+        //savedInstanceState.putString("MyString", "Welcome back to Android");
+        // etc.
+    }
+
+    private void saveIdDistributore() {
+        if (idDistributore != -1) {
+            SharedPreferences prefs = AppSingleton.getInstance(this).distributoriPreferences();
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putInt("idDistributore", idDistributore);
+            editor.commit();
+        }
+    }
+
+    private int restoreIdDistributore() {
+        SharedPreferences prefs = AppSingleton.getInstance(this).distributoriPreferences();
+        int idDistributore = -1;
+        if (prefs != null) {
+            idDistributore = prefs.getInt("idDistributore", -1);
+
+        }
+        return idDistributore;
     }
 
 
