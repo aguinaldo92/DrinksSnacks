@@ -16,6 +16,7 @@ import java.util.Map;
 
 public class JsonObjectProtectedRequest extends JsonObjectRequest {
     String token;
+
     public JsonObjectProtectedRequest(int method, String url, JSONObject jsonRequest, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener, String token) {
         super(method, url, jsonRequest, listener, errorListener);
         this.token = token;
@@ -27,14 +28,11 @@ public class JsonObjectProtectedRequest extends JsonObjectRequest {
     }
 
 
-        @Override
-        public Map<String, String> getHeaders() throws AuthFailureError {
-        Map<String,String> params =  super.getHeaders();
-        if ( params == null ) {
-            params = new HashMap<>();
-            params.put("Content-Type","application/json");
-        }
-        params.put("Authorization","Bearer " + token);
+    @Override
+    public Map<String, String> getHeaders() throws AuthFailureError {
+        Map<String, String> params = new HashMap<>();
+        params.put("Content-Type", "application/json");
+        params.put("Authorization", "Bearer : " + token);
         //..add other headers
         return params;
     }

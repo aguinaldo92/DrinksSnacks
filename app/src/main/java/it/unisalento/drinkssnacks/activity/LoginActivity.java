@@ -221,22 +221,32 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         CharSequence text = "Response: " + response.toString();
                         Boolean isResultOK = response.optBoolean(result, false);
                         if (isResultOK) { // get token -> save token in shared preference whit editor and private context
-                            String token = response.optString("token", "token non valido");
-                            SharedPreferences.Editor editor = getSharedPreferences(AppSingleton.getSharedPreferencesDistributori(), MODE_PRIVATE).edit();
-                            editor.putString("token", token);
-                            editor.commit();
+                            JSONObject headers = response.optJSONObject("headers");
 
-                            //imposto il risultato per l'activity chiamante
-                            setResult(Activity.RESULT_OK, returnIntent);
-                            showProgress(false);
-                            finish();
+                            String bearer = headers.optString("Authorization", null);
+                            String[] parts = bearer.split(" ");
+                            String token = parts[2];
+                            if (AppSingleton.getInstance(getApplicationContext()).isTokenValid(token)) {
+                                SharedPreferences.Editor editor = getSharedPreferences(AppSingleton.getSharedPreferencesDistributori(), MODE_PRIVATE).edit();
+                                editor.putString("token", token);
+                                editor.commit();
+
+                                //imposto il risultato per l'activity chiamante
+                                setResult(Activity.RESULT_OK, returnIntent);
+                                showProgress(false);
+                                finish();
+                            } else {
+                                text = getString(R.string.error_generic);
+                            }
                         }
 
                         Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
                         toast.show();
                     } catch (ClassNotFoundException e) {
                         Log.i(TAG, "Impossibile trovare la classe Chiamante. : " + e.getStackTrace());
-                        //e.printStackTrace();
+
+                    } catch (Exception e) {
+                        Log.i(TAG, "Impossibile processare il token : " + e.getStackTrace());
                     }
 
 
@@ -321,10 +331,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     Boolean isLogged = response.optBoolean(result, false);
                     if (isLogged) {
                         String token = response.optString("token", "token non valido");
-                        int idUtente = response.optInt("idUtente",-1);
+                        int idUtente = response.optInt("idUtente", -1);
                         SharedPreferences.Editor editor = getSharedPreferences(AppSingleton.getSharedPreferencesDistributori(), MODE_PRIVATE).edit();
                         editor.putString("token", token);
-                        editor.putInt("idUtente",idUtente);
+                        editor.putInt("idUtente", idUtente);
                         editor.commit();
 
                     }

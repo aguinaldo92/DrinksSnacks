@@ -3,7 +3,9 @@ package it.unisalento.drinkssnacks.singleton;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.support.annotation.Nullable;
 import android.support.v4.util.LruCache;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -23,6 +25,7 @@ public class AppSingleton {
     private static Context mCtx;
     private RequestQueue mRequestQueue;
     private ImageLoader mImageLoader;
+    private String TAG = AppSingleton.class.getSimpleName();
 
 
     private AppSingleton(Context context) {
@@ -85,16 +88,35 @@ public class AppSingleton {
         return prefs;
     }
 
-    public Boolean isTokenValid() {
+    @Nullable
+    public String fetchToken() {
         SharedPreferences prefs = null;
         String token;
         prefs = distributoriPreferences();
         if (prefs != null) {
             token = prefs.getString("token", null);
             if (token != null) {
-                JWT jwt = new JWT(token);
-                if (!jwt.isExpired(20))
-                    return true;
+                try {
+                    JWT jwt = new JWT(token);
+                    if (!jwt.isExpired(20))
+                        return token;
+                } catch (Exception e) {
+                    Log.e(TAG, e.getLocalizedMessage());
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
+    public Boolean isTokenSavedValid() {
+        SharedPreferences prefs = null;
+        String token;
+        prefs = distributoriPreferences();
+        if (prefs != null) {
+            token = fetchToken();
+            if (token != null) {
+                return true;
             }
             prefs.edit().putString("token", null);
             prefs.edit().commit();
@@ -102,4 +124,16 @@ public class AppSingleton {
 
         return false;
     }
+
+    public Boolean isTokenValid(String token) {
+        try {
+            JWT jwt = new JWT(token);
+            if (!jwt.isExpired(20))
+                return true;
+        } catch (Exception e) {
+            Log.e(TAG, "Token non valido e non analizzabile");
+        }
+        return false;
+    }
+
 }

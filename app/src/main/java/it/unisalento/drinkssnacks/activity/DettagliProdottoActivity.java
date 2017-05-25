@@ -15,7 +15,6 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.NetworkImageView;
 import com.google.gson.Gson;
 
@@ -29,6 +28,7 @@ import it.unisalento.drinkssnacks.model.ProdottoDetailModel;
 import it.unisalento.drinkssnacks.model.ProdottoDistributoreModel;
 import it.unisalento.drinkssnacks.model.StabilimentoModel;
 import it.unisalento.drinkssnacks.singleton.AppSingleton;
+import it.unisalento.drinkssnacks.volley.JsonObjectProtectedRequest;
 
 
 public class DettagliProdottoActivity extends AppCompatActivity {
@@ -58,7 +58,7 @@ public class DettagliProdottoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         this.idDistributore = getIntent().getIntExtra(RowProdottiDistributoreAdapter.EXTRA_IDDISTRIBUTORE, -1);
         this.prodottoDistributoreModel = getIntent().getParcelableExtra(RowProdottiDistributoreAdapter.EXTRA_PRODOTTODISTRIBUTOREMODELS);
-        if (!AppSingleton.getInstance(getApplicationContext()).isTokenValid()) {
+        if (!AppSingleton.getInstance(getApplicationContext()).isTokenSavedValid()) {
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtra("ClassCanonicalName", TAG);
             startActivityForResult(intent, REQUEST_CODE_NEW_ACTIVITY_LOGIN);
@@ -96,8 +96,8 @@ public class DettagliProdottoActivity extends AppCompatActivity {
             return;
         }
         String urlGetProdottoDetails = mUrl + "?" + "idProdotto=" + prodottoDistributoreModel.getIdProdotto();
-
-        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.GET, urlGetProdottoDetails, null, new Response.Listener<JSONObject>() {
+        String token = AppSingleton.getInstance(this).fetchToken();
+        JsonObjectProtectedRequest jsObjRequest = new JsonObjectProtectedRequest(Request.Method.GET, urlGetProdottoDetails, null, new Response.Listener<JSONObject>() {
 
             @Override
             public void onResponse(@NonNull JSONObject response) {
@@ -122,7 +122,7 @@ public class DettagliProdottoActivity extends AppCompatActivity {
                 toast.show();
 
             }
-        });
+        },token );
         AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(jsObjRequest);
 
     }
