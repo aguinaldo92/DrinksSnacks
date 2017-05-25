@@ -45,6 +45,7 @@ import java.util.List;
 import it.unisalento.drinkssnacks.R;
 import it.unisalento.drinkssnacks.singleton.AppSingleton;
 import it.unisalento.drinkssnacks.util.PasswordUtils;
+import it.unisalento.drinkssnacks.volley.JsonObjectResponseWithHeadersRequest;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -205,7 +206,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, mLoginUrl, params, new Response.Listener<JSONObject>() {
+            JsonObjectResponseWithHeadersRequest jsObjRequest = new JsonObjectResponseWithHeadersRequest(Request.Method.POST, mLoginUrl, params, new Response.Listener<JSONObject>() {
 
                 @Override
                 public void onResponse(@NonNull JSONObject response) {
