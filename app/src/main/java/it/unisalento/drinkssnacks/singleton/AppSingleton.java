@@ -87,6 +87,14 @@ public class AppSingleton {
         }
         return prefs;
     }
+    public int fetchIdPersona() {
+        SharedPreferences prefs = null;
+        int idPersona = -1;
+        if (prefs != null) {
+            idPersona = prefs.getInt("idPersona", -1);
+        }
+        return idPersona;
+    }
 
     @Nullable
     public String fetchToken() {

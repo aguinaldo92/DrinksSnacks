@@ -11,3 +11,4 @@
         android:layout_height="wrap_content"></ListView>
 
 </LinearLayout>
+<!-- <include layout="@layout/app_bar"/> -->

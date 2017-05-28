@@ -4,7 +4,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -24,6 +30,7 @@ import java.util.List;
 
 import it.unisalento.drinkssnacks.R;
 import it.unisalento.drinkssnacks.adapter.RowProdottiDistributoreAdapter;
+import it.unisalento.drinkssnacks.model.DistributoreModel;
 import it.unisalento.drinkssnacks.model.ProdottoDistributoreModel;
 import it.unisalento.drinkssnacks.singleton.AppSingleton;
 
@@ -36,25 +43,32 @@ public class ProdottiDistributoreListActivity extends AppCompatActivity {
     private List<ProdottoDistributoreModel> prodottoDistributoreModels = new ArrayList<>();
     private RowProdottiDistributoreAdapter adapter;
     private ListView listView;
+    private DistributoreModel distributoreModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_list_prodotti_distributore);
         adapter = new RowProdottiDistributoreAdapter(this, R.layout.row_activity_list_prodotti_distributore, prodottoDistributoreModels, idDistributore);
         listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(adapter);
+//        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+//        setSupportActionBar(myToolbar);
+
 
         Intent intent = getIntent();
-        int idDistributoreSalvato = -1;
+
         if (savedInstanceState != null) {
-            idDistributoreSalvato = savedInstanceState.getInt("idDistributore", -1);
+            distributoreModel = savedInstanceState.getParcelable("distributoreModel");
         }
-        this.idDistributore = intent.getIntExtra(MapsActivity.EXTRA_MESSAGE, idDistributoreSalvato);
-        if(idDistributore == -1) {
-            idDistributore =  restoreIdDistributore();
+        this.distributoreModel = intent.getParcelableExtra(MapsActivity.EXTRA_MESSAGE);
+        if (distributoreModel != null) {
+            this.idDistributore = distributoreModel.getIdDistributore();
+        } else {
+            distributoreModel = restoreDistributoreModel();
         }
+
+//        getSupportActionBar().setTitle(distributoreModel.getIndirizzo());
         Toast toast = Toast.makeText(getApplicationContext(), "visualizzo distributore con id = " + idDistributore, Toast.LENGTH_SHORT);
         toast.show();
 
@@ -102,7 +116,7 @@ public class ProdottiDistributoreListActivity extends AppCompatActivity {
         super.onPause();  // Always call the superclass method first
         // Release the Camera because we don't need it when paused
         // and other activities might need to use it.
-        saveIdDistributore();
+        saveDistributoreModel();
     }
 
     // solo per i cambiamenti di orientazione;
@@ -114,29 +128,68 @@ public class ProdottiDistributoreListActivity extends AppCompatActivity {
         // killed and restarted.
         // savedInstanceState.putBoolean("MyBoolean", true);
         //savedInstanceState.putDouble("myDouble", 1.9);
-        savedInstanceState.putInt("idDistributore", idDistributore);
+        savedInstanceState.putParcelable("distributoreModel", distributoreModel);
         //savedInstanceState.putString("MyString", "Welcome back to Android");
         // etc.
     }
 
-    private void saveIdDistributore() {
-        if (idDistributore != -1) {
+    private void saveDistributoreModel() {
+        if (distributoreModel != null) {
             SharedPreferences prefs = AppSingleton.getInstance(this).distributoriPreferences();
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putInt("idDistributore", idDistributore);
+            /*
+             salvo l'oggetto come json per poterlo salvare nelle sharedpreferences
+             https://stackoverflow.com/questions/7145606/how-android-sharedpreferences-save-store-object
+             */
+            Gson gson = new Gson();
+            String jsonDistributoreModel = gson.toJson(distributoreModel);
+            editor.putString("distributoreModel", jsonDistributoreModel);
             editor.commit();
         }
     }
 
-    private int restoreIdDistributore() {
+    @Nullable
+    private DistributoreModel restoreDistributoreModel() {
         SharedPreferences prefs = AppSingleton.getInstance(this).distributoriPreferences();
-        int idDistributore = -1;
         if (prefs != null) {
-            idDistributore = prefs.getInt("idDistributore", -1);
-
+            Gson gson = new Gson();
+            String jsonDistributoreModel = prefs.getString("distributoreModel", "");
+            DistributoreModel distributoreModel = gson.fromJson(jsonDistributoreModel, DistributoreModel.class);
+            return distributoreModel;
         }
-        return idDistributore;
+        return null;
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.mymenu, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        menu.findItem(R.id.action_favorite).setVisible(true);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                // User chose the "Settings" item, show the app settings UI...
+                return true;
+
+            case R.id.action_favorite:
+                // User chose the "Favorite" action, mark the current item
+                // as a favorite...
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
 }

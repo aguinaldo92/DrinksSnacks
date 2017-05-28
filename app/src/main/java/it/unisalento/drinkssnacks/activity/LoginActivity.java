@@ -222,13 +222,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         Boolean isResultOK = response.optBoolean(result, false);
                         if (isResultOK) { // get token -> save token in shared preference whit editor and private context
                             JSONObject headers = response.optJSONObject("headers");
-
+                            int idPersona = response.optInt("idPersona",-1);
                             String bearer = headers.optString("Authorization", null);
                             String[] parts = bearer.split(" ");
                             String token = parts[2];
-                            if (AppSingleton.getInstance(getApplicationContext()).isTokenValid(token)) {
+                            if (AppSingleton.getInstance(getApplicationContext()).isTokenValid(token) && idPersona != -1) {
                                 SharedPreferences.Editor editor = getSharedPreferences(AppSingleton.getSharedPreferencesDistributori(), MODE_PRIVATE).edit();
                                 editor.putString("token", token);
+                                editor.putInt("idPersona", idPersona);
                                 editor.commit();
 
                                 //imposto il risultato per l'activity chiamante
