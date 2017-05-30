@@ -6,11 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -35,7 +32,7 @@ import it.unisalento.drinkssnacks.model.ProdottoDistributoreModel;
 import it.unisalento.drinkssnacks.singleton.AppSingleton;
 
 
-public class ProdottiDistributoreListActivity extends AppCompatActivity {
+public class ProdottiDistributoreListActivity extends AppBasicActivity {
 
     private static final String TAG = ProdottiDistributoreListActivity.class.getSimpleName();
     private final String mUrl = "http://distributori.ddns.net:8080/distributori-rest/prodotti_erogati.json";
@@ -52,8 +49,8 @@ public class ProdottiDistributoreListActivity extends AppCompatActivity {
         adapter = new RowProdottiDistributoreAdapter(this, R.layout.row_activity_list_prodotti_distributore, prodottoDistributoreModels, idDistributore);
         listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(adapter);
-//        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-//        setSupportActionBar(myToolbar);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
 
 
         Intent intent = getIntent();
@@ -67,8 +64,14 @@ public class ProdottiDistributoreListActivity extends AppCompatActivity {
         } else {
             distributoreModel = restoreDistributoreModel();
         }
+        final ActionBar actionBar = getSupportActionBar();
 
-//        getSupportActionBar().setTitle(distributoreModel.getIndirizzo());
+        if (actionBar != null) {
+
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        getSupportActionBar().setTitle(distributoreModel.getIndirizzo());
         Toast toast = Toast.makeText(getApplicationContext(), "visualizzo distributore con id = " + idDistributore, Toast.LENGTH_SHORT);
         toast.show();
 
@@ -160,12 +163,6 @@ public class ProdottiDistributoreListActivity extends AppCompatActivity {
         return null;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.mymenu, menu);
-        return true;
-    }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -173,23 +170,6 @@ public class ProdottiDistributoreListActivity extends AppCompatActivity {
         menu.findItem(R.id.action_favorite).setVisible(true);
         return true;
     }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
-                return true;
 
-            case R.id.action_favorite:
-                // User chose the "Favorite" action, mark the current item
-                // as a favorite...
-                return true;
 
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
 }

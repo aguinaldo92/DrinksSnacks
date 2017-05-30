@@ -65,7 +65,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
     // default location if not available (ROME)
-    private final LatLng mDefaultLocation = new LatLng(41.890251, 12.492373);
+    private final LatLng mDefaultLocation = new LatLng(40.3833, 18.1833);
     private final Double mUserChosenDistance = 100d;
     private final int duration = Toast.LENGTH_LONG;
     private final String mUrl = "http://distributori.ddns.net:8080/distributori-rest/distributori.json";

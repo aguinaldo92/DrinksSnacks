@@ -30,11 +30,15 @@ public class JsonObjectProtectedRequest extends JsonObjectRequest {
 
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
-        Map<String, String> params = new HashMap<>();
-        params.put("Content-Type", "application/json");
-        params.put("Authorization", "Bearer : " + token);
+        Map<String, String> headers = super.getHeaders();
+        if (headers == null || headers.isEmpty()) {
+            headers = new HashMap<>();
+        }
+        //params.put("Content-Type", "application/json");
+        //headers.put("Content-Type", "application/x-www-form-urlencoded");
+        headers.put("Authorization", "Bearer : " + token);
         //..add other headers
-        return params;
+        return headers;
     }
 
 }

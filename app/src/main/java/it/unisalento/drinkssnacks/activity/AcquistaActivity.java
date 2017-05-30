@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -31,7 +30,7 @@ import it.unisalento.drinkssnacks.model.AcquistoModel;
 import it.unisalento.drinkssnacks.model.ProdottoDistributoreModel;
 import it.unisalento.drinkssnacks.singleton.AppSingleton;
 
-public class AcquistaActivity extends AppCompatActivity {
+public class AcquistaActivity extends AppBasicActivity {
     public static final String EXTRA_MESSAGE_RESULT = AcquistaActivity.class.getCanonicalName() + "_result";
     public static final String EXTRA_MESSAGE_CONTENT = AcquistaActivity.class.getCanonicalName() + "_content";
     private static final String TAG = AcquistaActivity.class.getSimpleName();

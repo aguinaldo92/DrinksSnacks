@@ -88,7 +88,7 @@ public class AppSingleton {
         return prefs;
     }
     public int fetchIdPersona() {
-        SharedPreferences prefs = null;
+        SharedPreferences prefs = distributoriPreferences();
         int idPersona = -1;
         if (prefs != null) {
             idPersona = prefs.getInt("idPersona", -1);
@@ -98,9 +98,8 @@ public class AppSingleton {
 
     @Nullable
     public String fetchToken() {
-        SharedPreferences prefs = null;
+        SharedPreferences prefs = distributoriPreferences();
         String token;
-        prefs = distributoriPreferences();
         if (prefs != null) {
             token = prefs.getString("token", null);
             if (token != null) {
@@ -118,16 +117,14 @@ public class AppSingleton {
     }
 
     public Boolean isTokenSavedValid() {
-        SharedPreferences prefs = null;
+        SharedPreferences prefs = distributoriPreferences();
         String token;
-        prefs = distributoriPreferences();
         if (prefs != null) {
             token = fetchToken();
             if (token != null) {
                 return true;
             }
-            prefs.edit().putString("token", null);
-            prefs.edit().commit();
+            prefs.edit().putString("token", null).commit();
         }
 
         return false;
@@ -142,6 +139,13 @@ public class AppSingleton {
             Log.e(TAG, "Token non valido e non analizzabile");
         }
         return false;
+    }
+
+    public void invalidateToken() {
+        SharedPreferences prefs = distributoriPreferences();
+        if (prefs != null) {
+            prefs.edit().putString("token", null).commit();
+        }
     }
 
 }

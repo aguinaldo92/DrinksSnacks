@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -31,7 +30,7 @@ import it.unisalento.drinkssnacks.singleton.AppSingleton;
 import it.unisalento.drinkssnacks.volley.JsonObjectProtectedRequest;
 
 
-public class DettagliProdottoActivity extends AppCompatActivity {
+public class DettagliProdottoActivity extends AppBasicActivity {
     private final static int REQUEST_CODE_NEW_ACTIVITY_LOGIN = 100;
     // nome canonico di questa classe tale che la login sa a chi deve riferire il risultato.
     private final static String TAG = DettagliProdottoActivity.class.getCanonicalName();
