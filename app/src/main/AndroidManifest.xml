@@ -101,15 +101,6 @@
             </intent-filter>
         </service>
 
-        <activity
-            android:name=".activity.ScrollingActivity"
-            android:label="@string/title_activity_scrolling"
-            android:parentActivityName=".activity.MapsActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="it.unisalento.drinkssnacks.activity.MapsActivity" />
-        </activity>
     </application>
 
 </manifest>
