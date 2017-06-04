@@ -7,15 +7,15 @@ import java.util.List;
  */
 
 public class SottoscrizioniModel {
-    List<Integer> listIdDistributori;
+    List<Integer> listDistributori;
     List<String> listTopics;
 
-    public List<Integer> getListIdDistributori() {
-        return listIdDistributori;
+    public List<Integer> getListDistributori() {
+        return listDistributori;
     }
 
-    public void setListIdDistributori(List<Integer> listIdDistributori) {
-        this.listIdDistributori = listIdDistributori;
+    public void setListDistributori(List<Integer> listDistributori) {
+        this.listDistributori = listDistributori;
     }
 
     public List<String> getListTopics() {

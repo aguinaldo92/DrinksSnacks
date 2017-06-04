@@ -30,6 +30,7 @@ import org.json.JSONObject;
 
 import it.unisalento.drinkssnacks.R;
 import it.unisalento.drinkssnacks.singleton.AppSingleton;
+import it.unisalento.drinkssnacks.subcriber.SubscriptionManager;
 import it.unisalento.drinkssnacks.util.PasswordUtils;
 import it.unisalento.drinkssnacks.volley.JsonObjectResponseWithHeadersRequest;
 
@@ -44,7 +45,7 @@ public class LoginActivity extends AppBasicActivity {
 
     //////   andrea.aguinaldo.licastro@gmail.com
     //////        admin
-    private static final int REQUEST_READ_CONTACTS = 0;
+
     private static final String TAG = LoginActivity.class.getSimpleName();
     private final String mLoginUrl = "http://distributori.ddns.net:8080/distributori-rest/login.json";
     private final String mRegistrationUrl = "http://distributori.ddns.net:8080/distributori-rest/registrazione.json";
@@ -153,9 +154,10 @@ public class LoginActivity extends AppBasicActivity {
 
                 @Override
                 public void onResponse(@NonNull JSONObject response) {
+                    CharSequence text;
                     try {
                         String result = "result";
-                        CharSequence text = "Response: " + response.toString();
+                        text = "Response: " + response.toString();
                         Boolean isResultOK = response.optBoolean(result, false);
                         if (isResultOK) { // get token -> save token in shared preference whit editor and private context
                             JSONObject headers = response.optJSONObject("headers");
@@ -168,9 +170,11 @@ public class LoginActivity extends AppBasicActivity {
                                 editor.putString("token", token);
                                 editor.putInt("idPersona", idPersona);
                                 editor.commit();
-
                                 //imposto il risultato per l'activity chiamante
                                 returnResultToCallerActivity(Activity.RESULT_OK);
+                                //  mi assicuro di sottoscrivermi a tutti i distributori che mi ero già sottoscritto
+                                SubscriptionManager subscriptionManager = new SubscriptionManager(getApplicationContext());
+                                subscriptionManager.subscribeAll();
                                 showProgress(false);
                                 finish();
                             } else { // TODO: gestione credenziali errate
@@ -178,15 +182,13 @@ public class LoginActivity extends AppBasicActivity {
                                 text = getString(R.string.error_generic);
                             }
                         }
-
-                        Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
-                        toast.show();
-
-
                     } catch (Exception e) {
-                        Log.i(TAG, "Impossibile processare il token : " + e.getStackTrace());
+                        showProgress(false);
+                        text = getString(R.string.error_generic);
+                        Log.i(TAG, "Impossibile processare il token : " + e);
                     }
-
+                    Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
+                    toast.show();
 
                 }
             }, new Response.ErrorListener() {
@@ -305,13 +307,15 @@ public class LoginActivity extends AppBasicActivity {
     private void returnResultToCallerActivity(int ActivityResult) {
         Intent intentReceived = getIntent();
         String activityCallerName = intentReceived.getStringExtra("ClassCanonicalName");
-        try {
-            Class<?> activityCallerClass = Class.forName(activityCallerName);
+        if (activityCallerName != null) {
+            try {
+                Class<?> activityCallerClass = Class.forName(activityCallerName);
 
-            Intent returnIntent = new Intent(getApplicationContext(), activityCallerClass);
-            setResult(Activity.RESULT_OK, returnIntent);
-        } catch (ClassNotFoundException e) {
-            Log.i(TAG, "Impossibile trovare la classe Chiamante. : " + e.getStackTrace());
+                Intent returnIntent = new Intent(getApplicationContext(), activityCallerClass);
+                setResult(Activity.RESULT_OK, returnIntent);
+            } catch (ClassNotFoundException e) {
+                Log.i(TAG, "Impossibile trovare la classe Chiamante. : " + e.getStackTrace());
+            }
         }
     }
 

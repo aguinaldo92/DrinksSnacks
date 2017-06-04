@@ -124,7 +124,8 @@
         "when a user tries to pick up one of cards.\n\n"
     </string>
     <string name="action_settings">Settings</string>
-    <string name="action_favorite">Segna Distributore come preferito</string>
+    <string name="action_notification_on">Attiva notifiche per questo distributore</string>
+    <string name="action_notification_off">Disattiva notifiche per questo distributore</string>
     <string name="action_feedback">Invia Feedback</string>
     <string name="feedback_activity_title">Inserisci Feedback</string>
     <string name="annulla">Annulla</string>

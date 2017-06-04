@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -30,17 +31,22 @@ import it.unisalento.drinkssnacks.adapter.RowProdottiDistributoreAdapter;
 import it.unisalento.drinkssnacks.model.DistributoreModel;
 import it.unisalento.drinkssnacks.model.ProdottoDistributoreModel;
 import it.unisalento.drinkssnacks.singleton.AppSingleton;
+import it.unisalento.drinkssnacks.subcriber.SubscriptionManager;
 
 
 public class ProdottiDistributoreListActivity extends AppBasicActivity {
 
     private static final String TAG = ProdottiDistributoreListActivity.class.getSimpleName();
     private final String mUrl = "http://distributori.ddns.net:8080/distributori-rest/prodotti_erogati.json";
+    String topic;
+    // views
+    Toolbar myToolbar;
     private int idDistributore;
     private List<ProdottoDistributoreModel> prodottoDistributoreModels = new ArrayList<>();
     private RowProdottiDistributoreAdapter adapter;
     private ListView listView;
     private DistributoreModel distributoreModel;
+    private Boolean isNotificationON = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +55,7 @@ public class ProdottiDistributoreListActivity extends AppBasicActivity {
         adapter = new RowProdottiDistributoreAdapter(this, R.layout.row_activity_list_prodotti_distributore, prodottoDistributoreModels, idDistributore);
         listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(adapter);
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
 
@@ -76,6 +82,7 @@ public class ProdottiDistributoreListActivity extends AppBasicActivity {
         toast.show();
 
         String getUrl = mUrl + "?" + "idDistributore=" + idDistributore;
+        topic = "distributore_" + String.valueOf(idDistributore);
         final String prodottiDistributoreArray = "prodottiErogati";
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, getUrl, null, new Response.Listener<JSONObject>() {
@@ -167,9 +174,47 @@ public class ProdottiDistributoreListActivity extends AppBasicActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
-        menu.findItem(R.id.action_favorite).setVisible(true);
+        SubscriptionManager subscriptionManager;
+        if (AppSingleton.getInstance(getApplicationContext()).isTokenSavedValid()) {
+            subscriptionManager = new SubscriptionManager(getApplicationContext());
+            menu.findItem(R.id.action_notification).setVisible(true);
+            if (subscriptionManager.contains(idDistributore)) {
+                menu.findItem(R.id.action_notification).setIcon(R.drawable.ic_notifications_off_white_48px);
+                isNotificationON = true;
+            } else {
+                menu.findItem(R.id.action_notification).setIcon(R.drawable.ic_notifications_white_48px);
+                isNotificationON = false;
+            }
+        }
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        SubscriptionManager subscriptionManager;
+        switch (item.getItemId()) {
+            case R.id.action_notification:
+                subscriptionManager = new SubscriptionManager(getApplicationContext());
+                if (isNotificationON) {
+                    subscriptionManager.unsubscribe(topic, true);
+                    item.setIcon(R.drawable.ic_notifications_white_48px);
+                    isNotificationON = false;
+                } else {
+                    subscriptionManager.subscribe(topic);
+                    item.setIcon(R.drawable.ic_notifications_off_white_48px);
+                    isNotificationON = true;
+                }
+                // User chose the "Favorite" action, mark the current item
+                // as a favorite...
+                return true;
 
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
 }

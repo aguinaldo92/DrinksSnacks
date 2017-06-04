@@ -80,6 +80,7 @@
             android:name=".activity.DettagliProdottoActivity"
             android:label="@string/app_name"
             android:parentActivityName=".activity.ProdottiDistributoreListActivity" />
+        <activity android:name=".activity.FeedbackActivity" />
 
         <!-- [START firebase_service] -->
         <service android:name=".service.FCMMessagingService">
@@ -103,7 +104,7 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".activity.FeedbackActivity" />
+
     </application>
 
 </manifest>
