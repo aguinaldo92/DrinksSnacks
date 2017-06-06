@@ -67,12 +67,12 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="16dp"
         android:text="@string/acquista_activity_btn_acquista"
-        app:layout_constraintHorizontal_bias="0.501"
+        app:layout_constraintHorizontal_bias="0.522"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/acquista_activity_seekbar_quantita" />
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@+id/acquista_activity_text_sconto_registrati" />
 
     <TextView
         android:id="@+id/acquista_activity_text_quantita_scelta"
@@ -96,8 +96,50 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:text="Produttore:"
+        android:textAppearance="@android:style/TextAppearance.Material.Medium"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="@+id/acquista_activity_text_nome_produttore"
         app:layout_constraintTop_toBottomOf="@+id/acquista_activity_text_nome_prodotto" />
+
+    <TextView
+        android:id="@+id/acquista_activity_text_prezzo_listino"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Prezzo di Listino"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/acquista_activity_text_quantita"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <TextView
+        android:id="@+id/acquista_activity_prezzo_listino"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBaseline_toBaselineOf="@+id/acquista_activity_text_prezzo_listino"
+        app:layout_constraintLeft_toRightOf="@+id/acquista_activity_text_prezzo_listino"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <TextView
+        android:id="@+id/acquista_activity_text_sconto_registrati"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Sconto Utenti registrati"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/acquista_activity_text_prezzo_listino" />
+
+    <TextView
+        android:id="@+id/acquista_activity_sconto_registrati"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:text="@string/sconto"
+        app:layout_constraintBaseline_toBaselineOf="@+id/acquista_activity_text_sconto_registrati"
+        app:layout_constraintLeft_toRightOf="@+id/acquista_activity_text_sconto_registrati"
+        app:layout_constraintRight_toRightOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

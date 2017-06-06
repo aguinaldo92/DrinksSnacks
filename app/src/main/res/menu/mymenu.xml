@@ -16,6 +16,12 @@
         android:title="@string/action_feedback"
         app:showAsAction="never"/>
 
+
+    <!-- gotomap, should always be in the overflow -->
+    <item android:id="@+id/action_goto_map"
+        android:title="@string/action_goto_map"
+        app:showAsAction="never"/>
+
     <!-- logout, should always be in the overflow -->
     <item
         android:id="@+id/action_logout"

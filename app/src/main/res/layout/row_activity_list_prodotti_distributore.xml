@@ -31,7 +31,7 @@
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/row_activity_btn_acquista"
-        style="@style/Widget.AppCompat.Button"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"

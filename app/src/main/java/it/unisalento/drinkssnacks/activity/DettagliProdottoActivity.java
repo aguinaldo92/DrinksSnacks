@@ -25,6 +25,7 @@ import it.unisalento.drinkssnacks.model.ProdottoDetailModel;
 import it.unisalento.drinkssnacks.model.ProdottoDistributoreModel;
 import it.unisalento.drinkssnacks.model.StabilimentoModel;
 import it.unisalento.drinkssnacks.singleton.AppSingleton;
+import it.unisalento.drinkssnacks.util.PriceUtil;
 import it.unisalento.drinkssnacks.volley.JsonObjectProtectedRequest;
 
 
@@ -43,14 +44,10 @@ public class DettagliProdottoActivity extends AppCompatActivity {
     // dettagli del prodotto da ottenere tramite chiamata a mUrl
     private ProdottoDetailModel prodottoDetailModel;
 
-    private int mQuantitaScelta = 0;
-
 
     // views
     private Button btnAcquista;
-    private TextView textViewQuantitaScelta;
     private ImageLoader imageLoader;
-    private int maxQuantitaAcquistabile = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,7 +116,7 @@ public class DettagliProdottoActivity extends AppCompatActivity {
                 toast.show();
 
             }
-        },token );
+        }, token);
         AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(jsObjRequest);
 
     }
@@ -128,9 +125,6 @@ public class DettagliProdottoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dettagli_prodotto);
         imageLoader = AppSingleton.getInstance(getApplicationContext()).getImageLoader();
         // un utente può comprare al massimo 5 oggetti dello stesso tipo per volta
-        if (prodottoDistributoreModel.getQuantita() < 5) {
-            maxQuantitaAcquistabile = prodottoDistributoreModel.getQuantita();
-        }
         // in ordine di visualizzazione nella pagina
         TextView textViewNomeProdotto = (TextView) findViewById(R.id.dettagli_activity_nomeProdotto);
         NetworkImageView imageProdottoView = (NetworkImageView) findViewById(R.id.dettagli_activity_img_prodotto);
@@ -153,22 +147,29 @@ public class DettagliProdottoActivity extends AppCompatActivity {
         StabilimentoModel stabilimentoModel = prodottoDetailModel.getProduttore().getStabilimento();
         String stabilimentoText = stabilimentoModel.getCitta() + " " + "(" + stabilimentoModel.getProvincia() + ")";
         textViewStabilimento.setText(stabilimentoText);
-        textViewPrezzoUnitario.setText(prodottoDetailModel.getPrezzo());
+        textViewPrezzoUnitario.setText(getString(R.string.prezzo_in_euro,prodottoDetailModel.getPrezzo()));
         String quantitaDisponibile = String.valueOf(prodottoDistributoreModel.getQuantita());
         textViewQuantitaDisponibile.setText(quantitaDisponibile);
-        textViewSconto.setText(prodottoDistributoreModel.getSconto());
+        Float scontoFloat = Float.parseFloat(prodottoDistributoreModel.getSconto()) * 100f;
+        Integer scontoInteger = Math.round(scontoFloat);
+        textViewSconto.setText(getString(R.string.sconto, String.valueOf(scontoInteger)));
         textViewIngredienti.setText(prodottoDetailModel.getIngredienti());
         textViewPreparazione.setText(prodottoDetailModel.getPreparazione());
-        textViewQuantitaScelta.setText(String.valueOf(mQuantitaScelta));
-        btnAcquista.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentAcquista = new Intent(getApplicationContext(), AcquistaActivity.class);
-                intentAcquista.putExtra(EXTRA_PRODOTTODISTRIBUTOREMODEL, prodottoDistributoreModel);
-                intentAcquista.putExtra(EXTRA_IDDISTRIBUTORE, idDistributore);
-                startActivity(intentAcquista);
-            }
-        });
+        if (prodottoDistributoreModel.getQuantita() > 0) {
+            btnAcquista.setText(getString(R.string.acquista_activity_btn_acquista, PriceUtil.getPrice(getApplicationContext(),1, prodottoDistributoreModel.getPrezzo(),prodottoDistributoreModel.getSconto())));
+            btnAcquista.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intentAcquista = new Intent(getApplicationContext(), AcquistaActivity.class);
+                    intentAcquista.putExtra(EXTRA_PRODOTTODISTRIBUTOREMODEL, prodottoDistributoreModel);
+                    intentAcquista.putExtra(EXTRA_IDDISTRIBUTORE, idDistributore);
+                    startActivity(intentAcquista);
+                }
+            });
+        } else {
+            btnAcquista.setClickable(false);
+            btnAcquista.setText("Prodotto non disponibile");
+        }
 
     }
 

@@ -51,6 +51,18 @@ public class ProdottiDistributoreListActivity extends AppBasicActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intentReceived = getIntent();
+
+        if (savedInstanceState != null) {
+            distributoreModel = savedInstanceState.getParcelable("distributoreModel");
+        }
+        this.distributoreModel = intentReceived.getParcelableExtra(MapsActivity.EXTRA_MESSAGE);
+        if (distributoreModel != null) {
+            this.idDistributore = distributoreModel.getIdDistributore();
+        } else {
+            distributoreModel = restoreDistributoreModel();
+            this.idDistributore = distributoreModel.getIdDistributore();
+        }
         setContentView(R.layout.activity_list_prodotti_distributore);
         adapter = new RowProdottiDistributoreAdapter(this, R.layout.row_activity_list_prodotti_distributore, prodottoDistributoreModels, idDistributore);
         listView = (ListView) findViewById(R.id.list);
@@ -58,18 +70,6 @@ public class ProdottiDistributoreListActivity extends AppBasicActivity {
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
-
-        Intent intent = getIntent();
-
-        if (savedInstanceState != null) {
-            distributoreModel = savedInstanceState.getParcelable("distributoreModel");
-        }
-        this.distributoreModel = intent.getParcelableExtra(MapsActivity.EXTRA_MESSAGE);
-        if (distributoreModel != null) {
-            this.idDistributore = distributoreModel.getIdDistributore();
-        } else {
-            distributoreModel = restoreDistributoreModel();
-        }
         final ActionBar actionBar = getSupportActionBar();
 
         if (actionBar != null) {
@@ -98,10 +98,7 @@ public class ProdottiDistributoreListActivity extends AppBasicActivity {
                             }.getType();
                             prodottoDistributoreModels = gson.fromJson(jsonArray.toString(), listType);
                             if (prodottoDistributoreModels != null && !prodottoDistributoreModels.isEmpty()) {
-                                for (ProdottoDistributoreModel prodottoDistributoreModel : prodottoDistributoreModels) {
-                                    if (prodottoDistributoreModel.getQuantita() > 0)
-                                        adapter.add(prodottoDistributoreModel);
-                                }
+                                adapter.addAll(prodottoDistributoreModels);
                                 adapter.notifyDataSetChanged();
                             }
                             //Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
@@ -194,6 +191,7 @@ public class ProdottiDistributoreListActivity extends AppBasicActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent intent;
+        CharSequence text;
         SubscriptionManager subscriptionManager;
         switch (item.getItemId()) {
             case R.id.action_notification:
@@ -202,11 +200,15 @@ public class ProdottiDistributoreListActivity extends AppBasicActivity {
                     subscriptionManager.unsubscribe(topic, true);
                     item.setIcon(R.drawable.ic_notifications_white_48px);
                     isNotificationON = false;
+                    text = "Notifiche distributore: OFF";
                 } else {
                     subscriptionManager.subscribe(topic);
                     item.setIcon(R.drawable.ic_notifications_off_white_48px);
                     isNotificationON = true;
+                    text = "Notifiche distributore: ON";
                 }
+                Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
+                toast.show();
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
                 return true;

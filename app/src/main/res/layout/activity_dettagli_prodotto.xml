@@ -133,6 +133,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
+                android:text="@string/prezzo_in_euro"
                 app:layout_constraintBaseline_toBaselineOf="@+id/dettagli_activity_text_prezzoUnitario"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toRightOf="@+id/dettagli_activity_text_prezzoUnitario"
@@ -166,7 +167,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
-                android:text="@string/sconto"
+                android:text="@string/txt_sconto"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/dettagli_activity_text_quantitaDisponibile" />
@@ -177,6 +178,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
+                android:text="@string/sconto"
                 app:layout_constraintBaseline_toBaselineOf="@+id/dettagli_activity_text_sconto"
                 app:layout_constraintLeft_toRightOf="@+id/dettagli_activity_text_sconto"
                 app:layout_constraintRight_toRightOf="parent" />

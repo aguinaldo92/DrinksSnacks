@@ -9,10 +9,11 @@
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>
-    <string name="action_sign_up">Register</string>
+    <string name="action_sign_up">Sign up</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="action_sign_up_short">Sign up</string>
     <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_already_used_email">This email address is already used</string>
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
@@ -21,7 +22,7 @@
     <string name="window_list_title">Prodotti erogati dal distributore</string>
     <string name="quantita_scelta">Quantità:</string>
     <string name="acquista_activity_btn_acquista">Acquista: € %1$s</string>
-    <string name="prodotti_activity_btn_prezzo">€ %1$s</string>
+    <string name="prezzo_in_euro">€ %1$s</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="error_generic">Something went wrong</string>
     <string name="error_login_needed_detailed_info_products">You need to login to see the datailed informations of the products</string>
@@ -29,7 +30,8 @@
     <string name="produttore">Produttore:</string>
     <string name="prezzoUnitario">Prezzo Unitario:</string>
     <string name="quantitaDisponibile">Quantità disponibile:</string>
-    <string name="sconto">Sconto:</string>
+    <string name="txt_sconto">Sconto:</string>
+    <string name="sconto">%1$s %%</string>
     <string name="ingredienti">Ingredienti:</string>
     <string name="preparazione">Preparazione:</string>
     <string name="title_activity_acquista">Acquista</string>
@@ -133,4 +135,6 @@
     <string name="invia">Invia</string>
     <string name="action_logout">Logout</string>
     <string name="action_login">Login o Registrati</string>
+    <string name="error_login_credentials">Credenziali Errate</string>
+    <string name="action_goto_map">Vai alla Mappa</string>
 </resources>

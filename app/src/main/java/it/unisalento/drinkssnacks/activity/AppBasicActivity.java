@@ -55,6 +55,11 @@ public class AppBasicActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
 
+            case R.id.action_goto_map:
+                intent = new Intent(this, MapsActivity.class);
+                startActivity(intent);
+                return true;
+
             case R.id.action_logout:
                 AppSingleton.getInstance(getApplicationContext()).invalidateToken();
                 subscriptionManager = new SubscriptionManager(getApplicationContext());

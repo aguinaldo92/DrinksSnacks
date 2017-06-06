@@ -23,7 +23,6 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,7 +47,7 @@ public class LoginActivity extends AppBasicActivity {
 
     private static final String TAG = LoginActivity.class.getSimpleName();
     private final String mLoginUrl = "http://distributori.ddns.net:8080/distributori-rest/login.json";
-    private final String mRegistrationUrl = "http://distributori.ddns.net:8080/distributori-rest/registrazione.json";
+    private final String mRegistrationUrl = "http://distributori.ddns.net:8080/distributori-rest/registration.json";
     // UI references.
     private EditText mEmailView;
     private EditText mPasswordView;
@@ -165,54 +164,55 @@ public class LoginActivity extends AppBasicActivity {
                             String bearer = headers.optString("Authorization", null);
                             String[] parts = bearer.split(" ");
                             String token = parts[2];
-                            if (AppSingleton.getInstance(getApplicationContext()).isTokenValid(token) && idPersona != -1) {
-                                SharedPreferences.Editor editor = getSharedPreferences(AppSingleton.getSharedPreferencesDistributori(), MODE_PRIVATE).edit();
-                                editor.putString("token", token);
-                                editor.putInt("idPersona", idPersona);
-                                editor.commit();
-                                //imposto il risultato per l'activity chiamante
-                                returnResultToCallerActivity(Activity.RESULT_OK);
-                                //  mi assicuro di sottoscrivermi a tutti i distributori che mi ero già sottoscritto
-                                SubscriptionManager subscriptionManager = new SubscriptionManager(getApplicationContext());
-                                subscriptionManager.subscribeAll();
-                                showProgress(false);
-                                finish();
-                            } else { // TODO: gestione credenziali errate
-                                showProgress(false);
-                                text = getString(R.string.error_generic);
-                            }
-                        }
-                    } catch (Exception e) {
+
+                            SharedPreferences.Editor editor = getSharedPreferences(AppSingleton.getSharedPreferencesDistributori(), MODE_PRIVATE).edit();
+                            editor.putString("token", token);
+                            editor.putInt("idPersona", idPersona);
+                            editor.commit();
+                            //imposto il risultato per l'activity chiamante
+                            returnResultToCallerActivity(Activity.RESULT_OK);
+                            //  mi assicuro di sottoscrivermi a tutti i distributori che mi ero già sottoscritto
+                            SubscriptionManager subscriptionManager = new SubscriptionManager(getApplicationContext());
+                            subscriptionManager.subscribeAll();
+                            showProgress(false);
+                            finish();
+                        } else {
+
                         showProgress(false);
-                        text = getString(R.string.error_generic);
-                        Log.i(TAG, "Impossibile processare il token : " + e);
+                        text = getString(R.string.error_login_credentials);
                     }
-                    Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
+                } catch( Exception e)   {
+                    showProgress(false);
+                    text = getString(R.string.error_generic);
+                    Log.i(TAG, "Impossibile processare il token : " + e);
+                }
+
+                Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
                     toast.show();
 
-                }
-            }, new Response.ErrorListener() {
+            }
+        },new Response.ErrorListener() {
 
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    mEmailView.setError(getString(R.string.error_generic));
-                    mPasswordView.setError(getString(R.string.error_generic));
-                    Toast toast = Toast.makeText(getApplicationContext(), "Errore", Toast.LENGTH_SHORT);
-                    toast.show();
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                mEmailView.setError(getString(R.string.error_generic));
+                mPasswordView.setError(getString(R.string.error_generic));
+                Toast toast = Toast.makeText(getApplicationContext(), "Errore", Toast.LENGTH_SHORT);
+                toast.show();
 
-                }
-            });
+            }
+        });
 
-            // Access the RequestQueue through your singleton class.
-            AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(jsObjRequest);
+        // Access the RequestQueue through your singleton class.
+        AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(jsObjRequest);
 
-        }
+    }
 /*
         mAuthTask = new UserLoginTask(email, password);
         mAuthTask.execute((Void) null);
         */
 
-    }
+}
 
     private void attemptRegistration() {
         // Reset errors.
@@ -259,29 +259,39 @@ public class LoginActivity extends AppBasicActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, mRegistrationUrl, params, new Response.Listener<JSONObject>() {
+
+            JsonObjectResponseWithHeadersRequest jsObjRequest = new JsonObjectResponseWithHeadersRequest(Request.Method.POST, mRegistrationUrl, params, new Response.Listener<JSONObject>() {
 
                 @Override
                 public void onResponse(@NonNull JSONObject response) {
 
                     String result = "result";
-                    CharSequence text = "Response: " + response.toString();
-                    Boolean isLogged = response.optBoolean(result, false);
-                    Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
-                    toast.show();
-                    if (isLogged) {
-                        String token = response.optString("token", "token non valido");
-                        int idUtente = response.optInt("idUtente", -1);
+                    CharSequence text ;
+                    Boolean isResultOK = response.optBoolean(result, false);
+                    if (isResultOK) {
+                        JSONObject headers = response.optJSONObject("headers");
+                        String bearer = headers.optString("Authorization", null);
+                        String[] parts = bearer.split(" ");
+                        String token = parts[2];
+                        int idPersona = response.optInt("idPersona", -1);
                         SharedPreferences.Editor editor = getSharedPreferences(AppSingleton.getSharedPreferencesDistributori(), MODE_PRIVATE).edit();
                         editor.putString("token", token);
-                        editor.putInt("idUtente", idUtente);
+                        editor.putInt("idPersona", idPersona);
                         editor.commit();
+                        //imposto il risultato per l'activity chiamante
+                        returnResultToCallerActivity(Activity.RESULT_OK);
+                        text ="Registrazione Effettuata";
                         showProgress(false);
                         returnResultToCallerActivity(Activity.RESULT_OK);
-
                         finish();
+                    } else{
+                        text = getString(R.string.error_already_used_email);
+                        showProgress(false);
+                        mEmailView.setError(getString(R.string.error_already_used_email));
 
                     }
+                    Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
+                    toast.show();
 
 
                 }
@@ -289,10 +299,14 @@ public class LoginActivity extends AppBasicActivity {
 
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast toast = Toast.makeText(getApplicationContext(), "Errore", Toast.LENGTH_SHORT);
+                    showProgress(false);
+                    mEmailView.setError(getString(R.string.error_generic));
+                    mPasswordView.setError(getString(R.string.error_generic));
+                    Toast toast = Toast.makeText(getApplicationContext(), error.getMessage() , Toast.LENGTH_SHORT);
                     toast.show();
                 }
             });
+
 
             // Access the RequestQueue through your singleton class.
             AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(jsObjRequest);

@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -20,6 +21,7 @@ import it.unisalento.drinkssnacks.activity.AcquistaActivity;
 import it.unisalento.drinkssnacks.activity.DettagliProdottoActivity;
 import it.unisalento.drinkssnacks.model.ProdottoDistributoreModel;
 import it.unisalento.drinkssnacks.singleton.AppSingleton;
+import it.unisalento.drinkssnacks.util.PriceUtil;
 
 
 /**
@@ -72,31 +74,45 @@ public class RowProdottiDistributoreAdapter extends ArrayAdapter {
         holder.imageProdottoView.setImageUrl(baseUrlImage + prodottoDistributoreModels.get(position).getFoto64(), imageLoader);
         holder.textViewNomeProdotto.setText(prodottoDistributoreModels.get(position).getNome());
         holder.textViewNomeProduttore.setText(prodottoDistributoreModels.get(position).getProduttore());
-        holder.btnAcquista.setText(context.getString(R.string.prodotti_activity_btn_prezzo, String.valueOf(prodottoDistributoreModels.get(position).getPrezzo())));
+        holder.btnAcquista.setText(context.getString(R.string.prezzo_in_euro, String.valueOf(PriceUtil.getPrice(context,1, prodottoDistributoreModels.get(position).getPrezzo(),prodottoDistributoreModels.get(position).getSconto()))));
+
         //holder.btnAcquista.setText(String.valueOf(prodottoDistributoreModels.get(position).getPrezzo()));
         holder.textViewScaffale.setText("Scaf:" + prodottoDistributoreModels.get(position).getScaffale() + " Posto:" + prodottoDistributoreModels.get(position).getPosto());
         holder.textViewQuantita.setText("Q.tà: " + prodottoDistributoreModels.get(position).getQuantita());
         //textViewPosto.setText("Posto:"+prodottoDistributoreModels.get(position).getPosto());
+        holder.btnAcquista.setTag(R.id.positionTag, String.valueOf(position));
+        rowView.setTag(R.id.positionTag, String.valueOf(position));
+        if(prodottoDistributoreModels.get(position).getQuantita() < 1){
+            holder.btnAcquista.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        String text = "Prodotto non disponibile";
+                        Toast toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
+                        toast.show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-        holder.btnAcquista.setTag(R.id.positionTag,String.valueOf(position));
-        rowView.setTag(R.id.positionTag,String.valueOf(position));
-
-        holder.btnAcquista.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    Integer position = Integer.parseInt(v.getTag(R.id.positionTag).toString());
-                    Intent intent = new Intent(context, AcquistaActivity.class);
-                    intent.putExtra(EXTRA_PRODOTTODISTRIBUTOREMODEL, prodottoDistributoreModels.get(position));
-                    intent.putExtra(EXTRA_IDDISTRIBUTORE, idDistributore);
-                    context.startActivity(intent);
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
+            });
+        } else {
+            holder.btnAcquista.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        Integer position = Integer.parseInt(v.getTag(R.id.positionTag).toString());
+                        Intent intent = new Intent(context, AcquistaActivity.class);
+                        intent.putExtra(EXTRA_PRODOTTODISTRIBUTOREMODEL, prodottoDistributoreModels.get(position));
+                        intent.putExtra(EXTRA_IDDISTRIBUTORE, idDistributore);
+                        context.startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-            }
-        });
-
+                }
+            });
+        }
         rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
