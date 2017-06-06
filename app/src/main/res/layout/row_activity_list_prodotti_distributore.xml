@@ -14,6 +14,7 @@
         android:layout_height="64dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,6 +31,7 @@
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/row_activity_btn_acquista"
+        style="@style/Widget.AppCompat.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
@@ -37,6 +39,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:gravity="center_horizontal"
+        android:text="@string/acquista_activity_btn_acquista"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

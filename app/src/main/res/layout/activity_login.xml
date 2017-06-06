@@ -11,6 +11,7 @@
     tools:context="it.unisalento.drinkssnacks.activity.LoginActivity">
 
     <!-- Login progress -->
+
     <ProgressBar
         android:id="@+id/login_progress"
         style="?android:attr/progressBarStyleLarge"
@@ -40,8 +41,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_email"
                     android:inputType="textEmailAddress"
-                    android:maxLines="1"
-                     />
+                    android:maxLines="1" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -58,8 +58,7 @@
                     android:imeActionLabel="@string/action_sign_in_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="textPassword"
-                    android:maxLines="1"
-                     />
+                    android:maxLines="1" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -71,6 +70,11 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/action_sign_in"
                 android:textStyle="bold" />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:visibility="invisible" />
 
             <TextView
                 android:id="@+id/or_text"

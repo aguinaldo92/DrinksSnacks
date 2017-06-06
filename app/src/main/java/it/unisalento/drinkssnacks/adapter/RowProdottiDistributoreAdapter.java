@@ -27,8 +27,8 @@ import it.unisalento.drinkssnacks.singleton.AppSingleton;
  */
 
 public class RowProdottiDistributoreAdapter extends ArrayAdapter {
-    public static final String EXTRA_PRODOTTODISTRIBUTOREMODELS = RowProdottiDistributoreAdapter.class.getCanonicalName() + "_prodottoDistributoreModels";
-    public static final String EXTRA_IDDISTRIBUTORE = RowProdottiDistributoreAdapter.class.getCanonicalName() + "_idDistributore";
+    public static final String EXTRA_PRODOTTODISTRIBUTOREMODEL = "prodottoDistributoreModel";
+    public static final String EXTRA_IDDISTRIBUTORE = "idDistributore";
     private static final String TAG = RowProdottiDistributoreAdapter.class.getSimpleName();
     private final Context context;
     private final String baseUrlImage = "http://distributori.ddns.net:8080/distributori/";
@@ -37,22 +37,12 @@ public class RowProdottiDistributoreAdapter extends ArrayAdapter {
     private int idDistributore;
 
 
-    static class ViewHolder {
-        public TextView textViewNomeProdotto;
-        TextView textViewNomeProduttore;
-        public TextView textViewScaffale;
-        public TextView textViewQuantita;
-        public Button btnAcquista;
-        public NetworkImageView imageProdottoView;
-    }
-
     public RowProdottiDistributoreAdapter( Context context, @LayoutRes int resource, List<ProdottoDistributoreModel> prodottoDistributoreModels, int idDistributore) {
         super(context, resource, prodottoDistributoreModels);
         this.context = context;
         this.prodottoDistributoreModels = prodottoDistributoreModels;
         this.idDistributore = idDistributore;
     }
-
 
     @Override
     public int getCount() {
@@ -82,7 +72,8 @@ public class RowProdottiDistributoreAdapter extends ArrayAdapter {
         holder.imageProdottoView.setImageUrl(baseUrlImage + prodottoDistributoreModels.get(position).getFoto64(), imageLoader);
         holder.textViewNomeProdotto.setText(prodottoDistributoreModels.get(position).getNome());
         holder.textViewNomeProduttore.setText(prodottoDistributoreModels.get(position).getProduttore());
-        holder.btnAcquista.setText(String.valueOf(prodottoDistributoreModels.get(position).getPrezzo()));
+        holder.btnAcquista.setText(context.getString(R.string.prodotti_activity_btn_prezzo, String.valueOf(prodottoDistributoreModels.get(position).getPrezzo())));
+        //holder.btnAcquista.setText(String.valueOf(prodottoDistributoreModels.get(position).getPrezzo()));
         holder.textViewScaffale.setText("Scaf:" + prodottoDistributoreModels.get(position).getScaffale() + " Posto:" + prodottoDistributoreModels.get(position).getPosto());
         holder.textViewQuantita.setText("Q.tà: " + prodottoDistributoreModels.get(position).getQuantita());
         //textViewPosto.setText("Posto:"+prodottoDistributoreModels.get(position).getPosto());
@@ -96,7 +87,7 @@ public class RowProdottiDistributoreAdapter extends ArrayAdapter {
                 try {
                     Integer position = Integer.parseInt(v.getTag(R.id.positionTag).toString());
                     Intent intent = new Intent(context, AcquistaActivity.class);
-                    intent.putExtra(EXTRA_PRODOTTODISTRIBUTOREMODELS, prodottoDistributoreModels.get(position));
+                    intent.putExtra(EXTRA_PRODOTTODISTRIBUTOREMODEL, prodottoDistributoreModels.get(position));
                     intent.putExtra(EXTRA_IDDISTRIBUTORE, idDistributore);
                     context.startActivity(intent);
                 } catch (Exception e) {
@@ -112,7 +103,7 @@ public class RowProdottiDistributoreAdapter extends ArrayAdapter {
                 try {
                     Integer position = Integer.parseInt(v.getTag(R.id.positionTag).toString());
                     Intent intent = new Intent(context, DettagliProdottoActivity.class);
-                    intent.putExtra(EXTRA_PRODOTTODISTRIBUTOREMODELS, prodottoDistributoreModels.get(position));
+                    intent.putExtra(EXTRA_PRODOTTODISTRIBUTOREMODEL, prodottoDistributoreModels.get(position));
                     intent.putExtra(EXTRA_IDDISTRIBUTORE, idDistributore);
                     context.startActivity(intent);
                 } catch (Exception e) {
@@ -121,6 +112,15 @@ public class RowProdottiDistributoreAdapter extends ArrayAdapter {
             }
         });
         return rowView;
+    }
+
+    static class ViewHolder {
+        public TextView textViewNomeProdotto;
+        public TextView textViewScaffale;
+        public TextView textViewQuantita;
+        public Button btnAcquista;
+        public NetworkImageView imageProdottoView;
+        TextView textViewNomeProduttore;
     }
 
 }

@@ -57,17 +57,16 @@ public class FCMMessagingService extends FirebaseMessagingService {
         // [END_EXCLUDE]
 
         super.onMessageReceived(remoteMessage);
+        // TODO(developer): Handle FCM messages here. // handled
         Log.d("msg", "onMessageReceived: " + remoteMessage.getData().get("message"));
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("test")
+                .setSmallIcon(R.drawable.logo_notifiche)
+                .setContentTitle(remoteMessage.getData().get("title"))
                 .setContentText(remoteMessage.getData().get("message"));
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         manager.notify(0, builder.build());
 
 
-
-        // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 

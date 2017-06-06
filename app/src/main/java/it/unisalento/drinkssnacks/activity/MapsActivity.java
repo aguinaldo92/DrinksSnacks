@@ -99,6 +99,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             this /* OnConnectionFailedListener */)
                     .addConnectionCallbacks(this)
                     .addApi(LocationServices.API)
+                    //.addApi()
                     .build();
             mGoogleApiClient.connect();
             LocationRequest locationRequest = LocationRequest.create();

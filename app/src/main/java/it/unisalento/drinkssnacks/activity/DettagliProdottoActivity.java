@@ -2,12 +2,11 @@ package it.unisalento.drinkssnacks.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,8 +19,6 @@ import com.google.gson.Gson;
 
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
-
 import it.unisalento.drinkssnacks.R;
 import it.unisalento.drinkssnacks.adapter.RowProdottiDistributoreAdapter;
 import it.unisalento.drinkssnacks.model.ProdottoDetailModel;
@@ -32,6 +29,8 @@ import it.unisalento.drinkssnacks.volley.JsonObjectProtectedRequest;
 
 
 public class DettagliProdottoActivity extends AppCompatActivity {
+    public static final String EXTRA_PRODOTTODISTRIBUTOREMODEL = "prodottoDistributoreModel";
+    public static final String EXTRA_IDDISTRIBUTORE = "idDistributore";
     private final static int REQUEST_CODE_NEW_ACTIVITY_LOGIN = 100;
     // nome canonico di questa classe tale che la login sa a chi deve riferire il risultato.
     private final static String TAG = DettagliProdottoActivity.class.getCanonicalName();
@@ -57,7 +56,7 @@ public class DettagliProdottoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.idDistributore = getIntent().getIntExtra(RowProdottiDistributoreAdapter.EXTRA_IDDISTRIBUTORE, -1);
-        this.prodottoDistributoreModel = getIntent().getParcelableExtra(RowProdottiDistributoreAdapter.EXTRA_PRODOTTODISTRIBUTOREMODELS);
+        this.prodottoDistributoreModel = getIntent().getParcelableExtra(RowProdottiDistributoreAdapter.EXTRA_PRODOTTODISTRIBUTOREMODEL);
         if (!AppSingleton.getInstance(getApplicationContext()).isTokenSavedValid()) {
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.putExtra("ClassCanonicalName", TAG);
@@ -84,11 +83,9 @@ public class DettagliProdottoActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), ProdottiDistributoreListActivity.class);
                 intent.putExtra(RowProdottiDistributoreAdapter.EXTRA_IDDISTRIBUTORE, idDistributore);
                 startActivity(intent);
-
             }
         }
     }
-
 
     private void fetchProdottoDetails(ProdottoDistributoreModel prodottoDistributoreModel) {
         if (prodottoDistributoreModel.getIdProdotto() < 0) {
@@ -143,8 +140,7 @@ public class DettagliProdottoActivity extends AppCompatActivity {
         TextView textViewPrezzoUnitario = (TextView) findViewById(R.id.dettagli_activity_prezzoUnitario);
         TextView textViewQuantitaDisponibile = (TextView) findViewById(R.id.dettagli_activity_quantitaDisponibile);
         TextView textViewSconto = (TextView) findViewById(R.id.dettagli_activity_sconto);
-        textViewQuantitaScelta = (TextView) findViewById(R.id.dettagli_activity_quantitaScelta);
-        SeekBar seekBarQuantita = (SeekBar) findViewById(R.id.dettagli_activity_seekBar_quantita);
+
         btnAcquista = (Button) findViewById(R.id.dettagli_activity_btn_acquista);
         TextView textViewIngredienti = (TextView) findViewById(R.id.dettagli_activity_ingredienti);
         TextView textViewPreparazione = (TextView) findViewById(R.id.dettagli_activity_preparazione);
@@ -164,37 +160,18 @@ public class DettagliProdottoActivity extends AppCompatActivity {
         textViewIngredienti.setText(prodottoDetailModel.getIngredienti());
         textViewPreparazione.setText(prodottoDetailModel.getPreparazione());
         textViewQuantitaScelta.setText(String.valueOf(mQuantitaScelta));
-        seekBarQuantita.setMax(maxQuantitaAcquistabile);
-        seekBarQuantita.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        btnAcquista.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                int actualProgress = progress + 1;
-                setmQuantitaScelta(actualProgress);
-                textViewQuantitaScelta.setText(String.valueOf(actualProgress));
-                btnAcquista.setText(getString(R.string.acquista_activity_btn_acquista,String.valueOf(getPrice(actualProgress, prodottoDistributoreModel.getPrezzo()))));
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                textViewQuantitaScelta.setTypeface(null, Typeface.BOLD);
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                textViewQuantitaScelta.setTypeface(null, Typeface.NORMAL);
+            public void onClick(View v) {
+                Intent intentAcquista = new Intent(getApplicationContext(), AcquistaActivity.class);
+                intentAcquista.putExtra(EXTRA_PRODOTTODISTRIBUTOREMODEL, prodottoDistributoreModel);
+                intentAcquista.putExtra(EXTRA_IDDISTRIBUTORE, idDistributore);
+                startActivity(intentAcquista);
             }
         });
 
-
     }
 
-    public void setmQuantitaScelta(int mQuantitaScelta) {
-        this.mQuantitaScelta = mQuantitaScelta;
-    }
-
-    private BigDecimal getPrice(int quantita, String prezzo) {
-        return new BigDecimal(prezzo).multiply(new BigDecimal(quantita));
-    }
 
     private void raiseError() {
         Toast toast = Toast.makeText(getApplicationContext(), getString(R.string.error_generic), Toast.LENGTH_LONG);

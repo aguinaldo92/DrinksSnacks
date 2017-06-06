@@ -73,9 +73,11 @@ public class ProdottiDistributoreListActivity extends AppCompatActivity {
                             Type listType = new TypeToken<ArrayList<ProdottoDistributoreModel>>() {
                             }.getType();
                             prodottoDistributoreModels = gson.fromJson(jsonArray.toString(), listType);
-                            if (!prodottoDistributoreModels.isEmpty()) {
-
-                                adapter.addAll(prodottoDistributoreModels);
+                            if (prodottoDistributoreModels != null && !prodottoDistributoreModels.isEmpty()) {
+                                for (ProdottoDistributoreModel prodottoDistributoreModel : prodottoDistributoreModels) {
+                                    if (prodottoDistributoreModel.getQuantita() > 0)
+                                        adapter.add(prodottoDistributoreModel);
+                                }
                                 adapter.notifyDataSetChanged();
                             }
                             //Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
