@@ -128,6 +128,13 @@ public class ProdottiDistributoreListActivity extends AppBasicActivity {
         saveDistributoreModel();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        // Release the Camera because we don't need it when paused
+        // and other activities might need to use it.
+        adapter.notifyDataSetChanged();
+    }
     // solo per i cambiamenti di orientazione;
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {

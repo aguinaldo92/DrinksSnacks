@@ -113,20 +113,34 @@ public class RowProdottiDistributoreAdapter extends ArrayAdapter {
                 }
             });
         }
-        rowView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    Integer position = Integer.parseInt(v.getTag(R.id.positionTag).toString());
-                    Intent intent = new Intent(context, DettagliProdottoActivity.class);
-                    intent.putExtra(EXTRA_PRODOTTODISTRIBUTOREMODEL, prodottoDistributoreModels.get(position));
-                    intent.putExtra(EXTRA_IDDISTRIBUTORE, idDistributore);
-                    context.startActivity(intent);
-                } catch (Exception e) {
-                    e.printStackTrace();
+        if (AppSingleton.getInstance(context).isTokenSavedValid()) {
+            rowView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        Integer position = Integer.parseInt(v.getTag(R.id.positionTag).toString());
+                        Intent intent = new Intent(context, DettagliProdottoActivity.class);
+                        intent.putExtra(EXTRA_PRODOTTODISTRIBUTOREMODEL, prodottoDistributoreModels.get(position));
+                        intent.putExtra(EXTRA_IDDISTRIBUTORE, idDistributore);
+                        context.startActivity(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            rowView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                        String text = "Effettua il login per visualizzare maggiori informazioni sul prodotto";
+                        Toast toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
+                        toast.show();
+
+                }
+            });
+
+        }
+
         return rowView;
     }
 
