@@ -118,10 +118,10 @@ public class SubscriptionManager {
 
     }
 
-    public void subscribe(String topic) {
+    public void subscribe(final String topic) {
         try {
             String[] parts = topic.split("_");
-            String idDistributore = parts[1];
+            final String idDistributore = parts[1];
             int idPersona = AppSingleton.getInstance(mContext).fetchIdPersona();
             String modality = "set";
             String urlSetSubscription = mUrl + "?" + "idPersona=" + idPersona + "&" + "idDistributore=" + idDistributore + "&" + "modality=" + modality;
@@ -138,9 +138,9 @@ public class SubscriptionManager {
                     CharSequence text = "Response: " + response.toString();
 
                     if (isResultTrue) {
-                        idSottoscrizione = response.optInt(idSottoscrizioniString);
-                        String topicSottoscritto = "distributore_" + String.valueOf(idSottoscrizione);
-                        FirebaseMessaging.getInstance().subscribeToTopic(topicSottoscritto);
+                        //idSottoscrizione = response.optInt(idSottoscrizioniString);
+                        //String topicSottoscritto = "distributore_" + String.valueOf(idDistributore);
+                        FirebaseMessaging.getInstance().subscribeToTopic(topic);
                         JSONObject jsonObject = response.optJSONObject(sottoscrizioni);
                         SottoscrizioniModel sottoscrizioniModel = gson.fromJson(jsonObject.toString(), SottoscrizioniModel.class);
                         AppSingleton.getInstance(mContext).saveSubscriptions(sottoscrizioniModel);
