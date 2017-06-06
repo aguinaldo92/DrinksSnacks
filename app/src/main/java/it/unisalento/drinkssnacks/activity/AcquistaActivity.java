@@ -53,7 +53,7 @@ public class AcquistaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_acquista);
         imageLoader = AppSingleton.getInstance(getApplicationContext()).getImageLoader();
         Intent intentReceived = getIntent();
-        prodottoDistributoreModel = intentReceived.getParcelableExtra(RowProdottiDistributoreAdapter.EXTRA_PRODOTTODISTRIBUTOREMODELS);
+        prodottoDistributoreModel = intentReceived.getParcelableExtra(RowProdottiDistributoreAdapter.EXTRA_PRODOTTODISTRIBUTOREMODEL);
         idDistributore = intentReceived.getIntExtra(RowProdottiDistributoreAdapter.EXTRA_IDDISTRIBUTORE, idDistributore);
         if (prodottoDistributoreModel.getQuantita() < 5) {
             maxQuantitaAcquistabile = prodottoDistributoreModel.getQuantita();
