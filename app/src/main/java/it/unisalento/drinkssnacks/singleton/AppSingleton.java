@@ -12,6 +12,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.auth0.android.jwt.JWT;
+import com.google.gson.Gson;
+
+import it.unisalento.drinkssnacks.model.SottoscrizioniModel;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -88,11 +91,19 @@ public class AppSingleton {
         return prefs;
     }
 
+    public int fetchIdPersona() {
+        SharedPreferences prefs = distributoriPreferences();
+        int idPersona = -1;
+        if (prefs != null) {
+            idPersona = prefs.getInt("idPersona", -1);
+        }
+        return idPersona;
+    }
+
     @Nullable
     public String fetchToken() {
-        SharedPreferences prefs = null;
+        SharedPreferences prefs = distributoriPreferences();
         String token;
-        prefs = distributoriPreferences();
         if (prefs != null) {
             token = prefs.getString("token", null);
             if (token != null) {
@@ -110,16 +121,14 @@ public class AppSingleton {
     }
 
     public Boolean isTokenSavedValid() {
-        SharedPreferences prefs = null;
+        SharedPreferences prefs = distributoriPreferences();
         String token;
-        prefs = distributoriPreferences();
         if (prefs != null) {
             token = fetchToken();
             if (token != null) {
                 return true;
             }
-            prefs.edit().putString("token", null);
-            prefs.edit().commit();
+            prefs.edit().putString("token", null).commit();
         }
 
         return false;
@@ -134,6 +143,42 @@ public class AppSingleton {
             Log.e(TAG, "Token non valido e non analizzabile");
         }
         return false;
+    }
+
+    public void invalidateToken() {
+        SharedPreferences prefs = distributoriPreferences();
+        if (prefs != null) {
+            prefs.edit().putString("token", null).commit();
+        }
+    }
+
+    public void saveSubscriptions(SottoscrizioniModel sottoscrizioniModel) {
+        SharedPreferences prefs = distributoriPreferences();
+        if (prefs != null) {
+            Gson gson = new Gson();
+            String sottoscrizioniJson = gson.toJson(sottoscrizioniModel);
+            prefs.edit().putString("sottoscrizioni", sottoscrizioniJson).commit();
+        }
+    }
+
+
+    public SottoscrizioniModel fetchSubscriptionsSaved() {
+        SharedPreferences prefs = distributoriPreferences();
+        SottoscrizioniModel sottoscrizioniModel = new SottoscrizioniModel();
+        try {
+            if (prefs != null) {
+                Gson gson = new Gson();
+                String sottoscrizioniModelString = prefs.getString("sottoscrizioni", null);
+                if (sottoscrizioniModelString != null) {
+                    sottoscrizioniModel = gson.fromJson(sottoscrizioniModelString, SottoscrizioniModel.class);
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "fetchSubscriptionsSaved: " + e.getMessage());
+        }
+        return sottoscrizioniModel;
+
+
     }
 
 }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!-- "Mark Favorite", should appear as action button if possible -->
+    <item
+        android:id="@+id/action_notification"
+        android:icon="@drawable/ic_stat_ic_notification"
+        android:title="@string/action_notification_on"
+        android:visible="false"
+        app:showAsAction="ifRoom"/>
+
+
+    <!-- feedback, should always be in the overflow -->
+    <item android:id="@+id/action_feedback"
+        android:title="@string/action_feedback"
+        app:showAsAction="never"/>
+
+    <!-- logout, should always be in the overflow -->
+    <item
+        android:id="@+id/action_logout"
+        android:title="@string/action_logout"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_login"
+        android:title="@string/action_login"
+        android:visible="false"
+        app:showAsAction="never" />
+
+
+</menu>

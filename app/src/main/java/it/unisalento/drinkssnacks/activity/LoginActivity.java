@@ -4,28 +4,17 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.LoaderManager.LoaderCallbacks;
-import android.content.CursorLoader;
 import android.content.Intent;
-import android.content.Loader;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -39,30 +28,29 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import it.unisalento.drinkssnacks.R;
 import it.unisalento.drinkssnacks.singleton.AppSingleton;
+import it.unisalento.drinkssnacks.subcriber.SubscriptionManager;
 import it.unisalento.drinkssnacks.util.PasswordUtils;
 import it.unisalento.drinkssnacks.volley.JsonObjectResponseWithHeadersRequest;
-
-import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppBasicActivity {
 
     /**
      * Id to identity READ_CONTACTS permission request.
      */
-    private static final int REQUEST_READ_CONTACTS = 0;
+
+    //////   andrea.aguinaldo.licastro@gmail.com
+    //////        admin
+
     private static final String TAG = LoginActivity.class.getSimpleName();
     private final String mLoginUrl = "http://distributori.ddns.net:8080/distributori-rest/login.json";
     private final String mRegistrationUrl = "http://distributori.ddns.net:8080/distributori-rest/registrazione.json";
     // UI references.
-    private AutoCompleteTextView mEmailView;
+    private EditText mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
@@ -75,8 +63,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView(R.layout.activity_login);
 
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-        populateAutoComplete();
+        mEmailView = (EditText) findViewById(R.id.email);
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -108,49 +95,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-    }
-
-    private void populateAutoComplete() {
-        if (!mayRequestContacts()) {
-            return;
-        }
-
-        getLoaderManager().initLoader(0, null, this);
-    }
-
-    private boolean mayRequestContacts() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
-        }
-        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        }
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
-        } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-        }
-        return false;
-    }
-
-    /**
-     * Callback received when a permissions request has been completed.
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                populateAutoComplete();
-            }
-        }
     }
 
 
@@ -210,45 +154,41 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 @Override
                 public void onResponse(@NonNull JSONObject response) {
-
-                    String result = "result";
-                    Intent intentReceived = getIntent();
-                    String activityCallerName = intentReceived.getStringExtra("ClassCanonicalName");
+                    CharSequence text;
                     try {
-                        Class<?> activityCallerClass = Class.forName(activityCallerName);
-
-                        Intent returnIntent = new Intent(getApplicationContext(), activityCallerClass);
-                        CharSequence text = "Response: " + response.toString();
+                        String result = "result";
+                        text = "Response: " + response.toString();
                         Boolean isResultOK = response.optBoolean(result, false);
                         if (isResultOK) { // get token -> save token in shared preference whit editor and private context
                             JSONObject headers = response.optJSONObject("headers");
-
+                            int idPersona = response.optInt("idUtente", -1);
                             String bearer = headers.optString("Authorization", null);
                             String[] parts = bearer.split(" ");
                             String token = parts[2];
-                            if (AppSingleton.getInstance(getApplicationContext()).isTokenValid(token)) {
+                            if (AppSingleton.getInstance(getApplicationContext()).isTokenValid(token) && idPersona != -1) {
                                 SharedPreferences.Editor editor = getSharedPreferences(AppSingleton.getSharedPreferencesDistributori(), MODE_PRIVATE).edit();
                                 editor.putString("token", token);
+                                editor.putInt("idPersona", idPersona);
                                 editor.commit();
-
                                 //imposto il risultato per l'activity chiamante
-                                setResult(Activity.RESULT_OK, returnIntent);
+                                returnResultToCallerActivity(Activity.RESULT_OK);
+                                //  mi assicuro di sottoscrivermi a tutti i distributori che mi ero già sottoscritto
+                                SubscriptionManager subscriptionManager = new SubscriptionManager(getApplicationContext());
+                                subscriptionManager.subscribeAll();
                                 showProgress(false);
                                 finish();
-                            } else {
+                            } else { // TODO: gestione credenziali errate
+                                showProgress(false);
                                 text = getString(R.string.error_generic);
                             }
                         }
-
-                        Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
-                        toast.show();
-                    } catch (ClassNotFoundException e) {
-                        Log.i(TAG, "Impossibile trovare la classe Chiamante. : " + e.getStackTrace());
-
                     } catch (Exception e) {
-                        Log.i(TAG, "Impossibile processare il token : " + e.getStackTrace());
+                        showProgress(false);
+                        text = getString(R.string.error_generic);
+                        Log.i(TAG, "Impossibile processare il token : " + e);
                     }
-
+                    Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
+                    toast.show();
 
                 }
             }, new Response.ErrorListener() {
@@ -311,9 +251,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            //showProgress(true);
-            //mAuthTask = new LoginActivity.UserLoginTask(email, password);
-            //mAuthTask.execute((Void) null);
+            showProgress(true);
             JSONObject params = new JSONObject();
             try {
                 params.put("email", mEmailView.getText().toString());
@@ -329,6 +267,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     String result = "result";
                     CharSequence text = "Response: " + response.toString();
                     Boolean isLogged = response.optBoolean(result, false);
+                    Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
+                    toast.show();
                     if (isLogged) {
                         String token = response.optString("token", "token non valido");
                         int idUtente = response.optInt("idUtente", -1);
@@ -336,11 +276,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         editor.putString("token", token);
                         editor.putInt("idUtente", idUtente);
                         editor.commit();
+                        showProgress(false);
+                        returnResultToCallerActivity(Activity.RESULT_OK);
+
+                        finish();
 
                     }
 
-                    Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
-                    toast.show();
+
                 }
             }, new Response.ErrorListener() {
 
@@ -356,8 +299,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+    // ?? a che serve TODO: implementare o cancellare
     private void returnError() {
 
+    }
+
+    private void returnResultToCallerActivity(int ActivityResult) {
+        Intent intentReceived = getIntent();
+        String activityCallerName = intentReceived.getStringExtra("ClassCanonicalName");
+        if (activityCallerName != null) {
+            try {
+                Class<?> activityCallerClass = Class.forName(activityCallerName);
+
+                Intent returnIntent = new Intent(getApplicationContext(), activityCallerClass);
+                setResult(Activity.RESULT_OK, returnIntent);
+            } catch (ClassNotFoundException e) {
+                Log.i(TAG, "Impossibile trovare la classe Chiamante. : " + e.getStackTrace());
+            }
+        }
     }
 
     private boolean isEmailValid(String email) {
@@ -400,61 +359,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
 
     }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-        return new CursorLoader(this,
-                // Retrieve data rows for the device user's 'profile' contact.
-                Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
-                        ContactsContract.Contacts.Data.CONTENT_DIRECTORY), ProfileQuery.PROJECTION,
-
-                // Select only email addresses.
-                ContactsContract.Contacts.Data.MIMETYPE +
-                        " = ?", new String[]{ContactsContract.CommonDataKinds.Email
-                .CONTENT_ITEM_TYPE},
-
-                // Show primary email addresses first. Note that there won't be
-                // a primary email address if the user hasn't specified one.
-                ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
-        List<String> emails = new ArrayList<>();
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            emails.add(cursor.getString(ProfileQuery.ADDRESS));
-            cursor.moveToNext();
-        }
-
-        addEmailsToAutoComplete(emails);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
-
-    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(LoginActivity.this,
-                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-        mEmailView.setAdapter(adapter);
-    }
-
-
-    private interface ProfileQuery {
-        String[] PROJECTION = {
-                ContactsContract.CommonDataKinds.Email.ADDRESS,
-                ContactsContract.CommonDataKinds.Email.IS_PRIMARY,
-        };
-
-        int ADDRESS = 0;
-        int IS_PRIMARY = 1;
-    }
-
 
 }
 

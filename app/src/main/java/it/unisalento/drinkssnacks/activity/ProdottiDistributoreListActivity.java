@@ -4,7 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -24,41 +28,61 @@ import java.util.List;
 
 import it.unisalento.drinkssnacks.R;
 import it.unisalento.drinkssnacks.adapter.RowProdottiDistributoreAdapter;
+import it.unisalento.drinkssnacks.model.DistributoreModel;
 import it.unisalento.drinkssnacks.model.ProdottoDistributoreModel;
 import it.unisalento.drinkssnacks.singleton.AppSingleton;
+import it.unisalento.drinkssnacks.subcriber.SubscriptionManager;
 
 
-public class ProdottiDistributoreListActivity extends AppCompatActivity {
+public class ProdottiDistributoreListActivity extends AppBasicActivity {
 
     private static final String TAG = ProdottiDistributoreListActivity.class.getSimpleName();
     private final String mUrl = "http://distributori.ddns.net:8080/distributori-rest/prodotti_erogati.json";
+    String topic;
+    // views
+    Toolbar myToolbar;
     private int idDistributore;
     private List<ProdottoDistributoreModel> prodottoDistributoreModels = new ArrayList<>();
     private RowProdottiDistributoreAdapter adapter;
     private ListView listView;
+    private DistributoreModel distributoreModel;
+    private Boolean isNotificationON = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_list_prodotti_distributore);
         adapter = new RowProdottiDistributoreAdapter(this, R.layout.row_activity_list_prodotti_distributore, prodottoDistributoreModels, idDistributore);
         listView = (ListView) findViewById(R.id.list);
         listView.setAdapter(adapter);
+        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+
 
         Intent intent = getIntent();
-        int idDistributoreSalvato = -1;
+
         if (savedInstanceState != null) {
-            idDistributoreSalvato = savedInstanceState.getInt("idDistributore", -1);
+            distributoreModel = savedInstanceState.getParcelable("distributoreModel");
         }
-        this.idDistributore = intent.getIntExtra(MapsActivity.EXTRA_MESSAGE, idDistributoreSalvato);
-        if(idDistributore == -1) {
-            idDistributore =  restoreIdDistributore();
+        this.distributoreModel = intent.getParcelableExtra(MapsActivity.EXTRA_MESSAGE);
+        if (distributoreModel != null) {
+            this.idDistributore = distributoreModel.getIdDistributore();
+        } else {
+            distributoreModel = restoreDistributoreModel();
         }
+        final ActionBar actionBar = getSupportActionBar();
+
+        if (actionBar != null) {
+
+            actionBar.setDisplayShowTitleEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+        getSupportActionBar().setTitle(distributoreModel.getIndirizzo());
         Toast toast = Toast.makeText(getApplicationContext(), "visualizzo distributore con id = " + idDistributore, Toast.LENGTH_SHORT);
         toast.show();
 
         String getUrl = mUrl + "?" + "idDistributore=" + idDistributore;
+        topic = "distributore_" + String.valueOf(idDistributore);
         final String prodottiDistributoreArray = "prodottiErogati";
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
                 (Request.Method.GET, getUrl, null, new Response.Listener<JSONObject>() {
@@ -104,7 +128,7 @@ public class ProdottiDistributoreListActivity extends AppCompatActivity {
         super.onPause();  // Always call the superclass method first
         // Release the Camera because we don't need it when paused
         // and other activities might need to use it.
-        saveIdDistributore();
+        saveDistributoreModel();
     }
 
     // solo per i cambiamenti di orientazione;
@@ -116,29 +140,83 @@ public class ProdottiDistributoreListActivity extends AppCompatActivity {
         // killed and restarted.
         // savedInstanceState.putBoolean("MyBoolean", true);
         //savedInstanceState.putDouble("myDouble", 1.9);
-        savedInstanceState.putInt("idDistributore", idDistributore);
+        savedInstanceState.putParcelable("distributoreModel", distributoreModel);
         //savedInstanceState.putString("MyString", "Welcome back to Android");
         // etc.
     }
 
-    private void saveIdDistributore() {
-        if (idDistributore != -1) {
+    private void saveDistributoreModel() {
+        if (distributoreModel != null) {
             SharedPreferences prefs = AppSingleton.getInstance(this).distributoriPreferences();
             SharedPreferences.Editor editor = prefs.edit();
-            editor.putInt("idDistributore", idDistributore);
+            /*
+             salvo l'oggetto come json per poterlo salvare nelle sharedpreferences
+             https://stackoverflow.com/questions/7145606/how-android-sharedpreferences-save-store-object
+             */
+            Gson gson = new Gson();
+            String jsonDistributoreModel = gson.toJson(distributoreModel);
+            editor.putString("distributoreModel", jsonDistributoreModel);
             editor.commit();
         }
     }
 
-    private int restoreIdDistributore() {
+    @Nullable
+    private DistributoreModel restoreDistributoreModel() {
         SharedPreferences prefs = AppSingleton.getInstance(this).distributoriPreferences();
-        int idDistributore = -1;
         if (prefs != null) {
-            idDistributore = prefs.getInt("idDistributore", -1);
-
+            Gson gson = new Gson();
+            String jsonDistributoreModel = prefs.getString("distributoreModel", "");
+            DistributoreModel distributoreModel = gson.fromJson(jsonDistributoreModel, DistributoreModel.class);
+            return distributoreModel;
         }
-        return idDistributore;
+        return null;
     }
 
 
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        SubscriptionManager subscriptionManager;
+        if (AppSingleton.getInstance(getApplicationContext()).isTokenSavedValid()) {
+            subscriptionManager = new SubscriptionManager(getApplicationContext());
+            menu.findItem(R.id.action_notification).setVisible(true);
+            if (subscriptionManager.contains(idDistributore)) {
+                menu.findItem(R.id.action_notification).setIcon(R.drawable.ic_notifications_off_white_48px);
+                isNotificationON = true;
+            } else {
+                menu.findItem(R.id.action_notification).setIcon(R.drawable.ic_notifications_white_48px);
+                isNotificationON = false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
+        SubscriptionManager subscriptionManager;
+        switch (item.getItemId()) {
+            case R.id.action_notification:
+                subscriptionManager = new SubscriptionManager(getApplicationContext());
+                if (isNotificationON) {
+                    subscriptionManager.unsubscribe(topic, true);
+                    item.setIcon(R.drawable.ic_notifications_white_48px);
+                    isNotificationON = false;
+                } else {
+                    subscriptionManager.subscribe(topic);
+                    item.setIcon(R.drawable.ic_notifications_off_white_48px);
+                    isNotificationON = true;
+                }
+                // User chose the "Favorite" action, mark the current item
+                // as a favorite...
+                return true;
+
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
 }

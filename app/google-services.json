@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "671891497281-hshghublgqf9bstvqbf1e5icem81r8nj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.unisalento.drinkssnacks",
+            "certificate_hash": "eca342d3ceb809a1a554f82b317c79219edcf98e"
+          }
+        },
+        {
+          "client_id": "671891497281-p7pf8tt22a4qb8ilgdltvhdu4cgnvf1s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "it.unisalento.drinkssnacks",
+            "certificate_hash": "6eb11d5287c71b9b90a6198824f41d1c007d1ab5"
+          }
+        },
+        {
           "client_id": "671891497281-l8qf4vnpagdu03fue2rgf4a02a36vgpt.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
