@@ -78,8 +78,8 @@ public class ProdottiDistributoreListActivity extends AppBasicActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         getSupportActionBar().setTitle(distributoreModel.getIndirizzo());
-        Toast toast = Toast.makeText(getApplicationContext(), "visualizzo distributore con id = " + idDistributore, Toast.LENGTH_SHORT);
-        toast.show();
+        /*Toast toast = Toast.makeText(getApplicationContext(), "visualizzo distributore con id = " + idDistributore, Toast.LENGTH_SHORT);
+        toast.show();*/
 
         String getUrl = mUrl + "?" + "idDistributore=" + idDistributore;
         topic = "distributore_" + String.valueOf(idDistributore);

@@ -38,14 +38,7 @@ import it.unisalento.drinkssnacks.volley.JsonObjectResponseWithHeadersRequest;
  */
 public class LoginActivity extends AppBasicActivity {
 
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-
-    //////   andrea.aguinaldo.licastro@gmail.com
-    //////        admin
-
-    private static final String TAG = LoginActivity.class.getSimpleName();
+    private static final String TAG = LoginActivity.class.getCanonicalName();
     private final String mLoginUrl = "http://distributori.ddns.net:8080/distributori-rest/login.json";
     private final String mRegistrationUrl = "http://distributori.ddns.net:8080/distributori-rest/registration.json";
     // UI references.
@@ -153,10 +146,9 @@ public class LoginActivity extends AppBasicActivity {
 
                 @Override
                 public void onResponse(@NonNull JSONObject response) {
-                    CharSequence text;
                     try {
                         String result = "result";
-                        text = "Response: " + response.toString();
+                        /*text = "Response: " + response.toString();*/
                         Boolean isResultOK = response.optBoolean(result, false);
                         if (isResultOK) { // get token -> save token in shared preference whit editor and private context
                             JSONObject headers = response.optJSONObject("headers");
@@ -177,42 +169,36 @@ public class LoginActivity extends AppBasicActivity {
                             showProgress(false);
                             finish();
                         } else {
-
+                            showProgress(false);
+                            CharSequence text = getString(R.string.error_login_credentials);
+                            Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                    } catch (Exception e) {
                         showProgress(false);
-                        text = getString(R.string.error_login_credentials);
+                        CharSequence text = getString(R.string.error_generic);
+                        Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
+                        toast.show();
+                        Log.i(TAG, "Impossibile processare il token : " + e);
                     }
-                } catch( Exception e)   {
-                    showProgress(false);
-                    text = getString(R.string.error_generic);
-                    Log.i(TAG, "Impossibile processare il token : " + e);
+
+
+
                 }
+            }, new Response.ErrorListener() {
 
-                Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    mEmailView.setError(getString(R.string.error_generic));
+                    mPasswordView.setError(getString(R.string.error_generic));
+                    Toast toast = Toast.makeText(getApplicationContext(), "Errore", Toast.LENGTH_SHORT);
                     toast.show();
-
-            }
-        },new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                mEmailView.setError(getString(R.string.error_generic));
-                mPasswordView.setError(getString(R.string.error_generic));
-                Toast toast = Toast.makeText(getApplicationContext(), "Errore", Toast.LENGTH_SHORT);
-                toast.show();
-
-            }
-        });
-
-        // Access the RequestQueue through your singleton class.
-        AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(jsObjRequest);
-
+                }
+            });
+            // Access the RequestQueue through your singleton class.
+            AppSingleton.getInstance(getApplicationContext()).addToRequestQueue(jsObjRequest);
+        }
     }
-/*
-        mAuthTask = new UserLoginTask(email, password);
-        mAuthTask.execute((Void) null);
-        */
-
-}
 
     private void attemptRegistration() {
         // Reset errors.
@@ -266,7 +252,7 @@ public class LoginActivity extends AppBasicActivity {
                 public void onResponse(@NonNull JSONObject response) {
 
                     String result = "result";
-                    CharSequence text ;
+                    CharSequence text;
                     Boolean isResultOK = response.optBoolean(result, false);
                     if (isResultOK) {
                         JSONObject headers = response.optJSONObject("headers");
@@ -280,11 +266,11 @@ public class LoginActivity extends AppBasicActivity {
                         editor.commit();
                         //imposto il risultato per l'activity chiamante
                         returnResultToCallerActivity(Activity.RESULT_OK);
-                        text ="Registrazione Effettuata";
+                        text = "Registrazione Effettuata";
                         showProgress(false);
                         returnResultToCallerActivity(Activity.RESULT_OK);
                         finish();
-                    } else{
+                    } else {
                         text = getString(R.string.error_already_used_email);
                         showProgress(false);
                         mEmailView.setError(getString(R.string.error_already_used_email));
@@ -302,7 +288,7 @@ public class LoginActivity extends AppBasicActivity {
                     showProgress(false);
                     mEmailView.setError(getString(R.string.error_generic));
                     mPasswordView.setError(getString(R.string.error_generic));
-                    Toast toast = Toast.makeText(getApplicationContext(), error.getMessage() , Toast.LENGTH_SHORT);
+                    Toast toast = Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT);
                     toast.show();
                 }
             });
@@ -313,10 +299,6 @@ public class LoginActivity extends AppBasicActivity {
         }
     }
 
-    // ?? a che serve TODO: implementare o cancellare
-    private void returnError() {
-
-    }
 
     private void returnResultToCallerActivity(int ActivityResult) {
         Intent intentReceived = getIntent();
@@ -334,12 +316,12 @@ public class LoginActivity extends AppBasicActivity {
     }
 
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
+
         return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
+
         return password.length() > 4;
     }
 

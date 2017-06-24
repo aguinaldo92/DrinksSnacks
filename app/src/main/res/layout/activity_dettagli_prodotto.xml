@@ -111,21 +111,21 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginTop="8dp"
                 app:layout_constraintLeft_toRightOf="@+id/dettagli_activity_text_stabilimento"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dettagli_activity_nomeProduttore" />
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintBaseline_toBaselineOf="@+id/dettagli_activity_text_stabilimento" />
 
             <TextView
                 android:id="@+id/dettagli_activity_text_prezzoUnitario"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
                 android:text="@string/prezzoUnitario"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dettagli_activity_text_preparazione" />
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@+id/dettagli_activity_preparazione" />
 
             <TextView
                 android:id="@+id/dettagli_activity_prezzoUnitario"
@@ -134,20 +134,20 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:text="@string/prezzo_in_euro"
-                app:layout_constraintBaseline_toBaselineOf="@+id/dettagli_activity_text_prezzoUnitario"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toRightOf="@+id/dettagli_activity_text_prezzoUnitario"
-                app:layout_constraintRight_toRightOf="parent" />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBaseline_toBaselineOf="@+id/dettagli_activity_text_prezzoUnitario" />
 
             <TextView
                 android:id="@+id/dettagli_activity_text_quantitaDisponibile"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="8dp"
                 android:text="@string/quantitaDisponibile"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginTop="8dp"
                 app:layout_constraintTop_toBottomOf="@+id/dettagli_activity_text_prezzoUnitario" />
 
             <TextView
@@ -156,10 +156,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                app:layout_constraintBaseline_toBaselineOf="@+id/dettagli_activity_text_quantitaDisponibile"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintLeft_toRightOf="@+id/dettagli_activity_text_quantitaDisponibile"
-                app:layout_constraintRight_toRightOf="parent" />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBaseline_toBaselineOf="@+id/dettagli_activity_text_quantitaDisponibile" />
 
             <TextView
                 android:id="@+id/dettagli_activity_text_sconto"
@@ -181,7 +181,8 @@
                 android:text="@string/sconto"
                 app:layout_constraintBaseline_toBaselineOf="@+id/dettagli_activity_text_sconto"
                 app:layout_constraintLeft_toRightOf="@+id/dettagli_activity_text_sconto"
-                app:layout_constraintRight_toRightOf="parent" />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintHorizontal_bias="0.0" />
 
 
             <Button
@@ -194,7 +195,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
-                android:text="@string/acquista_activity_btn_acquista"
+                android:text="@string/vai_acquista"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -228,7 +229,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginTop="7dp"
+                android:layout_marginTop="8dp"
                 android:text="@string/preparazione"
                 android:textStyle="bold"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -240,10 +241,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginTop="8dp"
                 app:layout_constraintLeft_toRightOf="@+id/dettagli_activity_text_preparazione"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/dettagli_activity_ingredienti" />
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintBaseline_toBaselineOf="@+id/dettagli_activity_text_preparazione" />
         </android.support.constraint.ConstraintLayout>
     </ScrollView>
 

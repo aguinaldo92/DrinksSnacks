@@ -1,9 +1,13 @@
 package it.unisalento.drinkssnacks.activity;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -40,7 +44,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.Gson;
 
 import org.json.JSONArray;
@@ -58,15 +61,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public static final String EXTRA_MESSAGE = MapsActivity.class.getCanonicalName();
     private static final String TAG = MapsActivity.class.getSimpleName();
     // zoom of camera on the world view
-    private static final int DEFAULT_ZOOM = 15;
+    private static final int DEFAULT_ZOOM = 12;
     // permission access fine location
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     // Keys for storing activity state.
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
+    private static final long LOCATION_REFRESH_TIME = 5000;
+    private static final float LOCATION_REFRESH_DISTANCE = 100;
     // default location if not available (ROME)
     private final LatLng mDefaultLocation = new LatLng(40.3833, 18.1833);
-    private final Double mUserChosenDistance = 100d;
+    private final String mUserChosenDistance = "100";
+    private final static int REQUEST_CODE_LOCATION = 1000;
+    LocationManager mLocationManager;
+    LocationListener mLocationListener;
     private final int duration = Toast.LENGTH_LONG;
     private final String mUrl = "http://distributori.ddns.net:8080/distributori-rest/distributori.json";
     private GoogleMap mMap;
@@ -78,8 +86,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // location retrieved by the Fused Location Provider.
     private Location mLastKnownLocation;
 
-    // test url  windows pc
-    //private final String mUrl = "http://192.168.1.105:8080/distributori-rest/distributori.json";
+    boolean gps_enabled = false;
+    boolean network_enabled = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +99,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mLastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             mCameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
+
+         mLocationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(final Location location) {
+                mLastKnownLocation = location;
+                getDeviceLocation();
+                getDistributoriLocations(mLastKnownLocation);
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
 
         // Build the Play services client for use by the Fused Location Provider and the Places API.
         // Use the addApi() method to request the Google Places API and the Fused Location Provider.
@@ -102,48 +135,63 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     //.addApi()
                     .build();
             mGoogleApiClient.connect();
-            LocationRequest locationRequest = LocationRequest.create();
-            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-            locationRequest.setInterval(30 * 1000);
-            locationRequest.setFastestInterval(5 * 1000);
-            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                    .addLocationRequest(locationRequest);
+            mLocationManager = (LocationManager)getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
 
-            //**************************
-            builder.setAlwaysShow(true); //this is the key ingredient
-            //**************************
 
-            PendingResult<LocationSettingsResult> result =
-                    LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
-            result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-                @Override
-                public void onResult(LocationSettingsResult result) {
-                    final Status status = result.getStatus();
-                    final LocationSettingsStates state = result.getLocationSettingsStates();
-                    switch (status.getStatusCode()) {
-                        case LocationSettingsStatusCodes.SUCCESS:
-                            // All location settings are satisfied. The client can initialize location
-                            // requests here.
-                            break;
-                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                            // Location settings are not satisfied. But could be fixed by showing the user
-                            // a dialog.
-                            try {
-                                // Show the dialog by calling startResolutionForResult(),
-                                // and check the result in onActivityResult().
-                                status.startResolutionForResult(
-                                        MapsActivity.this, 1000);
-                            } catch (IntentSender.SendIntentException e) {
-                                // Ignore the error.
-                            }
-                            break;
-                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                            // Location settings are not satisfied. However, we have no way to fix the
-                            // settings so we won't show the dialog.
-                            break;
+            try {
+                gps_enabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+            } catch(Exception ex) {}
+
+            try {
+                network_enabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            } catch(Exception ex) {}
+
+            if(!gps_enabled || !network_enabled) {
+                LocationRequest locationRequest = LocationRequest.create();
+                locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                locationRequest.setInterval(30 * 1000);
+                locationRequest.setFastestInterval(5 * 1000);
+                LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                        .addLocationRequest(locationRequest);
+
+                ///**************************
+                builder.setAlwaysShow(true); //this is the key ingredient
+                //***************************/
+
+                PendingResult<LocationSettingsResult> result =
+                        LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
+                result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+                    @Override
+                    public void onResult(LocationSettingsResult result) {
+                        final Status status = result.getStatus();
+                        final LocationSettingsStates state = result.getLocationSettingsStates();
+                        switch (status.getStatusCode()) {
+                            case LocationSettingsStatusCodes.SUCCESS:
+                                // All location settings are satisfied. The client can initialize location
+                                // requests here.
+
+                                break;
+                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                                // Location settings are not satisfied. But could be fixed by showing the user
+                                // a dialog.
+                                try {
+                                    // Show the dialog by calling startResolutionForResult(),
+                                    // and check the result in onActivityResult().
+                                    status.startResolutionForResult(
+                                            MapsActivity.this, REQUEST_CODE_LOCATION);
+                                } catch (IntentSender.SendIntentException e) {
+                                    // Ignore the error.
+                                }
+                                break;
+                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                // Location settings are not satisfied. However, we have no way to fix the
+                                // settings so we won't show the dialog.
+                                break;
+                        }
                     }
-                }
-            });
+                });
+            }
         }
     }
 
@@ -160,16 +208,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
+     * This is where we can add markers or lines, add listeners or move the camera.
      */
     @Override
+    @SuppressWarnings("MissingPermission")
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
@@ -177,20 +224,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         // check permission for location
         checkPermissionLocation();
-        // Turn on the My Location layer and the related control on the map.
-        updateLocationUI();
+        if( mLocationPermissionGranted && ( gps_enabled || network_enabled) ){
 
-        // Get the current location of the device and set the position of the map.
-        getDeviceLocation();
-        // Add a marker in Sydney and move the camera
-//        LatLng sydney = new LatLng(-34, 151);
-//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        getDistributoriLocations(mLastKnownLocation);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_REFRESH_TIME,
+                    LOCATION_REFRESH_DISTANCE, mLocationListener);
+            // Turn on the My Location layer and the related control on the map.
+            updateLocationUI();
 
+            // Get the current location of the device and set the position of the map.
+            getDeviceLocation();
+            getDistributoriLocations(mLastKnownLocation);
+        }
 
-        //iscrizione a un topic generico del sistema
-        FirebaseMessaging.getInstance().subscribeToTopic("DrinksSnacks");
     }
 
     @Override
@@ -245,6 +290,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == REQUEST_CODE_LOCATION) {
+            if (resultCode == Activity.RESULT_OK) {
+                //String result = data.getStringExtra("result");
+                gps_enabled = true;
+                network_enabled = true;
+                recreate();
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                Toast toast = Toast.makeText(getApplicationContext(), "E' necessario concedere i permessi di geolocalizzazione", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        }
+    }
+
+   @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
@@ -255,10 +317,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mLocationPermissionGranted = true;
+                    this.onMapReady(mMap);
                 }
             }
         }
-        updateLocationUI();
+
     }
 
     @SuppressWarnings("MissingPermission")
@@ -266,7 +329,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (mMap == null) {
             return;
         }
-
 
         if (mLocationPermissionGranted) {
             mMap.setMyLocationEnabled(true);
@@ -291,7 +353,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             lat = String.valueOf(mDefaultLocation.latitude);
             lon = String.valueOf(mDefaultLocation.longitude);
         }
-        distanza = String.valueOf(mUserChosenDistance);
+        distanza = mUserChosenDistance;
         String getUrl = mUrl + "?" + "lat=" + lat + "&" + "lon=" + lon + "&" + "distanza=" + distanza;
         final String distributoriArray = "distributori";
         JsonObjectRequest jsObjRequest = new JsonObjectRequest
@@ -302,7 +364,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         Gson gson = new Gson();
 
                         JSONArray jsonArray = response.optJSONArray(distributoriArray);
-                        CharSequence text = "Response: " ;
                         if (jsonArray != null) {
                             DistributoreModel[] distributori = gson.fromJson(jsonArray.toString(), DistributoreModel[].class);
                             if (distributori != null && distributori.length > 0) {
@@ -313,7 +374,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     markerOptions.title(label);
 
                                     mMap.addMarker(markerOptions).setTag(distributore);
-                                    Log.i(TAG, "distirbutore indirizzo = " + distributore.getIndirizzo());
+
                                     DistributoriCustomInfoWindowAdapter distributoriCustomInfoWindowAdapter = new DistributoriCustomInfoWindowAdapter();
 
                                     mMap.setInfoWindowAdapter(distributoriCustomInfoWindowAdapter);
@@ -323,26 +384,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                             DistributoreModel distributoreModel = ((DistributoreModel) marker.getTag());
                                             Intent intent = new Intent(MapsActivity.this, ProdottiDistributoreListActivity.class);
                                             intent.putExtra(EXTRA_MESSAGE, distributoreModel);
-
                                             Log.i(TAG, "Cliccato su marker con distributore id = " + distributoreModel.getIdDistributore());
-                                            Toast toast = Toast.makeText(getApplicationContext(), "Cliccato su marker con distributore id = " + ((DistributoreModel) marker.getTag()).getIdDistributore(), duration);
-                                            toast.show();
                                             startActivity(intent);
                                         }
                                     });
-
-                                    Log.i(TAG, distributore.getPosizioneEdificio());
-                                    for (CategorieForniteModel categorieForniteModel : distributore.getListCategorieFornite()) {
-                                        Log.i(TAG, categorieForniteModel.getNome());
-                                    }
-
                                 }
                             }
                         }
-
-
-                        Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
-                        toast.show();
 
                     }
                 }, new Response.ErrorListener() {
@@ -375,6 +423,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
+
     public class DistributoriCustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
 
         @Override
@@ -393,8 +442,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
             ArrayAdapter<String> mCategoriesMarkerAdapter = new ArrayAdapter<>(getApplicationContext(), R.layout.text_view_only, categorieForniteNames);
             listView.setAdapter(mCategoriesMarkerAdapter);
-            Log.d(TAG, "indirizzi: + " + distributoreModel.getIndirizzo());
-            Log.d(TAG, "num cunt adapter items: + " + mCategoriesMarkerAdapter.getCount());
             TextView textViewAddress = (TextView) view.findViewById(R.id.info_window_address);
             TextView textViewPosizione = (TextView) view.findViewById(R.id.info_window_posizione);
             textViewAddress.setText(distributoreModel.getIndirizzo());

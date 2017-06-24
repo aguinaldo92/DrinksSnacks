@@ -25,7 +25,6 @@ import it.unisalento.drinkssnacks.model.ProdottoDetailModel;
 import it.unisalento.drinkssnacks.model.ProdottoDistributoreModel;
 import it.unisalento.drinkssnacks.model.StabilimentoModel;
 import it.unisalento.drinkssnacks.singleton.AppSingleton;
-import it.unisalento.drinkssnacks.util.PriceUtil;
 import it.unisalento.drinkssnacks.volley.JsonObjectProtectedRequest;
 
 
@@ -97,14 +96,14 @@ public class DettagliProdottoActivity extends AppCompatActivity {
             public void onResponse(@NonNull JSONObject response) {
                 Gson gson = new Gson();
                 JSONObject jsonObject = response.optJSONObject("prodottoDetail");
-                CharSequence text = "Response: " + response.toString();
+                //CharSequence text = "Response: " + response.toString();
                 if (jsonObject != null) {
                     prodottoDetailModel = gson.fromJson(jsonObject.toString(), ProdottoDetailModel.class);
                     if (prodottoDetailModel != null) {
                         composeView();
                     }
-                    Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
-                    toast.show();
+                   /* Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT);
+                    toast.show();*/
                 }
 
             }
@@ -156,8 +155,7 @@ public class DettagliProdottoActivity extends AppCompatActivity {
         textViewIngredienti.setText(prodottoDetailModel.getIngredienti());
         textViewPreparazione.setText(prodottoDetailModel.getPreparazione());
         if (prodottoDistributoreModel.getQuantita() > 0) {
-            btnAcquista.setText(getString(R.string.acquista_activity_btn_acquista, PriceUtil.getPrice(getApplicationContext(),1, prodottoDistributoreModel.getPrezzo(),prodottoDistributoreModel.getSconto())));
-            btnAcquista.setOnClickListener(new View.OnClickListener() {
+           btnAcquista.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intentAcquista = new Intent(getApplicationContext(), AcquistaActivity.class);

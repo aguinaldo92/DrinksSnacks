@@ -137,4 +137,5 @@
     <string name="action_login">Login o Registrati</string>
     <string name="error_login_credentials">Credenziali Errate</string>
     <string name="action_goto_map">Vai alla Mappa</string>
+    <string name="vai_acquista">Vai all\'acquisto</string>
 </resources>

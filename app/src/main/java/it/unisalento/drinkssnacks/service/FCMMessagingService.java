@@ -59,10 +59,15 @@ public class FCMMessagingService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         // TODO(developer): Handle FCM messages here. // handled
         Log.d("msg", "onMessageReceived: " + remoteMessage.getData().get("message"));
+        Intent intent = new Intent(this, MapsActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_ONE_SHOT);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.logo_notifiche)
                 .setContentTitle(remoteMessage.getNotification().getTitle())
-                .setContentText(remoteMessage.getNotification().getBody());
+                .setContentText(remoteMessage.getNotification().getBody())
+                .setContentIntent(pendingIntent)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(remoteMessage.getNotification().getBody()));
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         manager.notify(0, builder.build());
 
